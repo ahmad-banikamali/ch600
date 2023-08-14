@@ -1,13 +1,17 @@
-import 'package:ch600/Utils/constants.dart';
-import 'package:ch600/models/main_screen_button.dart';
-import 'package:ch600/screens/HomePage.dart';
-import 'package:ch600/widgets/Logo.dart';
+import 'package:ch600/models/device.dart';
+import 'package:ch600/screens/home_screen.dart';
+import 'package:ch600/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-import '../widgets/Background.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
+  await Hive.initFlutter();
+  Hive.registerAdapter(DeviceAdapter());
+  await Hive.openBox<Device>(deviceDB);
   runApp(const ProviderScope(child: MainApp()));
 }
 
@@ -17,6 +21,15 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("fa", "IR"),
+      ],
+      locale: const Locale("fa", "IR"),
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: ThemeData(

@@ -1,5 +1,7 @@
 var currentLang = "fa";
 
+const String deviceDB = "deviceBox.db";
+
  String get appName{
     return  "CH600";
 }

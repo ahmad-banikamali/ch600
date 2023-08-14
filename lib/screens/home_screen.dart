@@ -1,8 +1,9 @@
 import 'package:ch600/Utils/constants.dart';
-import 'package:ch600/models/main_screen_button.dart';
-import 'package:ch600/screens/SettingsScreen.dart';
-import 'package:ch600/widgets/Background.dart';
-import 'package:ch600/widgets/Logo.dart';
+import 'package:ch600/models/ui_models/main_screen_button.dart';
+import 'package:ch600/providers/device_provider.dart';
+import 'package:ch600/repository/device_repository.dart';
+import 'package:ch600/widgets/background.dart';
+import 'package:ch600/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,34 +18,40 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   late List<MainScreenButton> buttonData;
+  late DeviceRepository deviceRepository;
 
   @override
   void initState() {
     super.initState();
+    initButtonData();
+    deviceRepository = HiveDeviceRepository();
+  }
+
+  void initButtonData() { 
     buttonData = [
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: activate,
-          action: () {},
+          action: () {
+          },
           icon: Icons.lock_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: deactivate,
-          action: () {},
+          action: () {
+            },
           icon: Icons.lock_open_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: setting,
           action: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const SettingsScreen(),
-            ));
           },
           icon: Icons.settings_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: advance,
-          action: () {},
+          action: () {
+          },
           icon: Icons.hardware_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
@@ -54,7 +61,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: exit,
-          action: () {},
+          action: () {
+          },
           icon: Icons.exit_to_app_rounded),
     ];
   }
