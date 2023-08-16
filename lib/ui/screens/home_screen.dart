@@ -1,56 +1,55 @@
 import 'package:ch600/Utils/constants.dart';
-import 'package:ch600/models/ui_models/main_screen_button.dart';
-import 'package:ch600/providers/device_provider.dart';
-import 'package:ch600/repository/device_repository.dart';
-import 'package:ch600/widgets/background.dart';
-import 'package:ch600/widgets/logo.dart';
+import 'package:ch600/ui/screens/advance_screen.dart';
+import 'package:ch600/ui/screens/settings_screen.dart';
+import 'package:ch600/ui/ui_models/main_screen_button.dart';
+import 'package:ch600/ui/widgets/background.dart';
+import 'package:ch600/ui/widgets/device_drop_down.dart';
+import 'package:ch600/ui/widgets/logo.dart';
+import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key, required this.title});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
-  final String title;
 
   @override
-  ConsumerState<HomePage> createState() => _HomePageState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late List<MainScreenButton> buttonData;
-  late DeviceRepository deviceRepository;
 
   @override
   void initState() {
     super.initState();
     initButtonData();
-    deviceRepository = HiveDeviceRepository();
   }
 
-  void initButtonData() { 
+  void initButtonData() {
     buttonData = [
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: activate,
-          action: () {
-          },
+          action: () {},
           icon: Icons.lock_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: deactivate,
-          action: () {
-            },
+          action: () {},
           icon: Icons.lock_open_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: setting,
           action: () {
+            pushScreen(const SettingsScreen());
           },
           icon: Icons.settings_rounded),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: advance,
           action: () {
+            pushScreen( const AdvanceScreen());
           },
           icon: Icons.hardware_rounded),
       MainScreenButton(
@@ -61,8 +60,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: exit,
-          action: () {
-          },
+          action: () {},
           icon: Icons.exit_to_app_rounded),
     ];
   }
@@ -71,7 +69,15 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: const DeviceDropDown(),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                "assets/images/toolbar_logo.png",
+              ),
+            )
+          ],
         ),
         body: Stack(
           children: [

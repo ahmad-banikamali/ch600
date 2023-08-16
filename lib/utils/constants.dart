@@ -68,3 +68,43 @@ String get addNewDevice{
     return "Add New Device";
   }
 }
+
+String get deviceName{
+  if(currentLang=="fa") {
+    return  "نام دستگاه";
+  } else {
+    return "Device Name";
+  }
+}
+
+String get devicePhone{
+  if(currentLang=="fa") {
+    return  "شماره سیم کارت دستگاه";
+  } else {
+    return "Device Phone";
+  }
+}
+
+String get changePassword{
+  if(currentLang=="fa") {
+    return  "تغییر رمز دستگاه";
+  } else {
+    return "Change device password";
+  }
+}
+
+String get chooseSimCard{
+  if(currentLang=="fa") {
+    return  "انتخاب سیم کارت";
+  } else {
+    return "Choose SimCard";
+  }
+}
+
+String get accept{
+  if(currentLang=="fa") {
+    return  "تایید";
+  } else {
+    return "Accept";
+  }
+}

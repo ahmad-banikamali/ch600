@@ -1,5 +1,6 @@
-import 'package:ch600/models/device.dart';
-import 'package:ch600/screens/home_screen.dart';
+import 'package:ch600/data/models/device.dart';
+import 'package:ch600/ui/screens/home_screen.dart';
+import 'package:ch600/ui/screens/settings_screen.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,7 +36,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black)
             .copyWith(
-          primary: Colors.green,
+          primary: Colors.orange,
         ),
         useMaterial3: true,
       ).copyWith(
@@ -46,9 +47,8 @@ class MainApp extends StatelessWidget {
                   fontSize: 20)),
           appBarTheme: const AppBarTheme().copyWith(
               backgroundColor: Theme.of(context).colorScheme.primary)),
-      home: HomePage(title: appName),
+      // home: HomeScreen(title: appName),
+      home: const HomeScreen(),
     );
   }
 }
-
-

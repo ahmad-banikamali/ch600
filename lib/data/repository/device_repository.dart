@@ -1,11 +1,13 @@
-import 'package:ch600/models/device.dart';
+import 'package:ch600/data/models/device.dart';
 
 abstract class DeviceRepository {
   Map<dynamic, Device> getAllDevices();
 
   void addDevice(Device device);
 
-  Device? getActiveDevice();
+  void updateDevice(MapEntry<dynamic, Device> entry);
+
+  MapEntry<dynamic, Device>? getActiveDevice();
 
   void activateDeviceWithKey(dynamic key);
 

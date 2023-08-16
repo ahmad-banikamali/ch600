@@ -1,5 +1,5 @@
-import 'package:ch600/models/device.dart';
-import 'package:ch600/repository/device_repository.dart';
+import 'package:ch600/data/models/device.dart';
+import 'package:ch600/data/repository/device_repository.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -23,10 +23,23 @@ class HiveDeviceRepository extends DeviceRepository {
     _deviceBox.add(device);
   }
 
+
   @override
-  Device? getActiveDevice() {
+  void updateDevice(MapEntry<dynamic, Device> entry) {
+    if (entry.key == null) {
+      addDevice(entry.value);
+    } else {
+      _deviceBox.put(entry.key, entry.value);
+    }
+  }
+
+  @override
+  MapEntry<dynamic, Device>? getActiveDevice() {
     try {
-      return _deviceBox.values.firstWhere((element) => element.isActive);
+      return _deviceBox
+          .toMap()
+          .entries
+          .firstWhere((element) => element.value.isActive);
     } catch (_) {
       return null;
     }
@@ -36,6 +49,7 @@ class HiveDeviceRepository extends DeviceRepository {
   void activateDeviceWithKey(dynamic key) {
     Device? activeDevice = _deviceBox.get(key);
     if (activeDevice == null) return;
+    deactivateAllDevices();
     activeDevice.isActive = true;
     _deviceBox.put(key, activeDevice);
   }
@@ -45,8 +59,19 @@ class HiveDeviceRepository extends DeviceRepository {
     dynamic latestDeviceKey = _deviceBox.keys.last;
     var latestDevice = _deviceBox.get(latestDeviceKey);
     if (latestDevice == null) return;
+    deactivateAllDevices();
     latestDevice.isActive = true;
     _deviceBox.put(latestDeviceKey, latestDevice);
+  }
+
+  void deactivateAllDevices() {
+    _deviceBox
+        .toMap()
+        .entries
+        .forEach((element) {
+      element.value.isActive = false;
+      _deviceBox.put(element.key, element.value);
+    });
   }
 
 
