@@ -31,7 +31,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(devices),
+            Text(devices,style: TextStyle(color: Colors.red),),
             ListView.builder(
               itemBuilder: (c, i) {
                 return InkWell(
@@ -45,7 +45,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         "${deviceRepository.getAllDevices()[i]!.name} **"
                         "${deviceRepository.getAllDevices()[i]!.phone} **"
                         "${deviceRepository.getAllDevices()[i]!.password} **"
-                        "${deviceRepository.getAllDevices()[i]!.defaultSimCard} "));
+                        "${deviceRepository.getAllDevices()[i]!.defaultSimCard} ",
+                        style: TextStyle(color: Colors.red)),
+                );
               },
               itemCount: deviceRepository.getAllDevices().length,
               shrinkWrap: true,

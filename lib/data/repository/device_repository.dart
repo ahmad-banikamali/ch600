@@ -1,4 +1,6 @@
+import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
+import 'package:hive/hive.dart';
 
 abstract class DeviceRepository {
   Map<dynamic, Device> getAllDevices();
@@ -12,4 +14,8 @@ abstract class DeviceRepository {
   void activateDeviceWithKey(dynamic key);
 
   void activateLatestDevice();
+
+  List<Alarm> getAlarmsForActiveDevice();
+
+  void addAlarmForActiveDevice(Alarm alarm);
 }

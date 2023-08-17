@@ -1,47 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'device.dart';
+part of 'alarm.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class DeviceAdapter extends TypeAdapter<Device> {
+class AlarmAdapter extends TypeAdapter<Alarm> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
-  Device read(BinaryReader reader) {
+  Alarm read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Device(
-      name: fields[0] as String,
-      phone: fields[1] as String,
-      password: fields[2] as String,
-      defaultSimCard: fields[3] as String,
-      isActive: fields[4] as bool,
-      alarms: (fields[5] as HiveList?)?.castHiveList(),
+    return Alarm(
+      hour: fields[1] as String,
+      minute: fields[2] as String,
+      dayOfWeek: fields[3] as String,
+      codeToSend: fields[4] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Device obj) {
+  void write(BinaryWriter writer, Alarm obj) {
     writer
-      ..writeByte(6)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.phone)
-      ..writeByte(2)
-      ..write(obj.password)
-      ..writeByte(3)
-      ..write(obj.defaultSimCard)
       ..writeByte(4)
-      ..write(obj.isActive)
-      ..writeByte(5)
-      ..write(obj.alarms);
+      ..writeByte(1)
+      ..write(obj.hour)
+      ..writeByte(2)
+      ..write(obj.minute)
+      ..writeByte(3)
+      ..write(obj.dayOfWeek)
+      ..writeByte(4)
+      ..write(obj.codeToSend);
   }
 
   @override
@@ -50,7 +44,7 @@ class DeviceAdapter extends TypeAdapter<Device> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DeviceAdapter &&
+      other is AlarmAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

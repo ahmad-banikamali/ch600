@@ -1,5 +1,6 @@
 import 'package:ch600/Utils/constants.dart';
 import 'package:ch600/ui/screens/advance_screen.dart';
+import 'package:ch600/ui/screens/guide_screen.dart';
 import 'package:ch600/ui/screens/settings_screen.dart';
 import 'package:ch600/ui/ui_models/main_screen_button.dart';
 import 'package:ch600/ui/widgets/background.dart';
@@ -8,10 +9,10 @@ import 'package:ch600/ui/widgets/logo.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
-
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -19,6 +20,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late List<MainScreenButton> buttonData;
+  final baseIconDir = "assets/images/icons_main_screen/";
+  final iconExtension = ".png";
 
   @override
   void initState() {
@@ -31,37 +34,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: activate,
-          action: () {},
-          icon: Icons.lock_rounded),
+          action: () {
+
+          },
+          iconName: "lock"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: deactivate,
           action: () {},
-          icon: Icons.lock_open_rounded),
+          iconName: "unlock"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: setting,
           action: () {
             pushScreen(const SettingsScreen());
           },
-          icon: Icons.settings_rounded),
+          iconName: "setting"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: advance,
           action: () {
-            pushScreen( const AdvanceScreen());
+            pushScreen(const AdvanceScreen());
           },
-          icon: Icons.hardware_rounded),
+          iconName: "more"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: guide,
-          action: () {},
-          icon: Icons.menu_book),
+          action: () {
+            pushScreen(const GuideScreen());
+          },
+          iconName: "information"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: exit,
-          action: () {},
-          icon: Icons.exit_to_app_rounded),
+          action: (){},
+          iconName: "exit"),
     ];
   }
 
@@ -69,6 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            automaticallyImplyLeading: false,
           title: const DeviceDropDown(),
           actions: [
             Padding(
@@ -105,12 +113,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 clipBehavior: Clip.antiAlias,
                                 child: MaterialButton(
-                                  padding: const EdgeInsets.all(36),
+                                  padding: const EdgeInsets.all(5),
                                   onPressed: button.action,
-                                  child: Icon(
-                                    button.icon,
-                                    size: 48,
-                                    color: Colors.white,
+                                  child: IconButton(
+                                    onPressed: button.action,
+                                    icon: ClipOval(
+                                        child: Image.asset(
+                                      "$baseIconDir${button.iconName}$iconExtension",
+                                    )),
                                   ),
                                 ),
                               ),

@@ -32,8 +32,8 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
             .map((e) => DropdownMenuItem(
                   value: e.key,
                   child: Text(
-                    e.value.name,
-                    style: const TextStyle(color: Colors.red),
+                    "${e.value.name}///${e.key}",
+                    style: const TextStyle(color: Colors.orange),
                   ),
                 ))
             .toList(),

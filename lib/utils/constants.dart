@@ -1,6 +1,7 @@
 var currentLang = "fa";
 
 const String deviceDB = "deviceBox.db";
+const String alarmDB = "alarmBox.db";
 
  String get appName{
     return  "CH600";
@@ -108,3 +109,122 @@ String get accept{
     return "Accept";
   }
 }
+
+
+String get activateWithSound{
+  if(currentLang=="fa") {
+    return  "فعال با صدا";
+  } else {
+    return "Activate With Sound";
+  }
+}
+
+
+String get deactivateWithSound{
+  if(currentLang=="fa") {
+    return  "غیر فعال با صدا";
+  } else {
+    return "Deactivate With Sound";
+  }
+}
+
+
+String get report{
+  if(currentLang=="fa") {
+    return  "گزارش";
+  } else {
+    return "Report";
+  }
+}
+
+
+String get semiActive{
+  if(currentLang=="fa") {
+    return  "نیمه فعال";
+  } else {
+    return "Semi Active";
+  }
+}
+
+
+String get activateRemote{
+  if(currentLang=="fa") {
+    return  "ریموت فعال";
+  } else {
+    return "Activate Remote";
+  }
+}
+
+
+String get deactivateRemote{
+  if(currentLang=="fa") {
+    return  "ریموت غیر فعال";
+  } else {
+    return "Deactivate Remote";
+  }
+}
+
+
+String get activateKeypad{
+  if(currentLang=="fa") {
+    return  "کی پد فعال";
+  } else {
+    return "Activate Keypad";
+  }
+}
+
+
+String get deactivateKeypad{
+  if(currentLang=="fa") {
+    return  "کی پد غیر فعال";
+  } else {
+    return "Deactivate Keypad";
+  }
+}
+
+
+String get activateConnection{
+  if(currentLang=="fa") {
+    return  "فعال کردن ارتبط";
+  } else {
+    return "Activate Connection";
+  }
+}
+
+
+String get deactivateConnection{
+  if(currentLang=="fa") {
+    return  "غیر فعال کردن ارتبط";
+  } else {
+    return "Deactivate Connection";
+  }
+}
+
+
+String get timers{
+  if(currentLang=="fa") {
+    return  "تایمرها";
+  } else {
+    return "Timers";
+  }
+}
+
+
+String get emergency{
+  if(currentLang=="fa") {
+    return  "آژیر اضظراری";
+  } else {
+    return "Emergency";
+  }
+}
+
+
+String get messagesInbox{
+  if(currentLang=="fa") {
+    return  "صندوق پیام ها";
+  } else {
+    return "Messages Inbox";
+  }
+}
+
+

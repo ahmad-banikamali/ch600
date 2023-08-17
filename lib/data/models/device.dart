@@ -1,9 +1,10 @@
+import 'package:ch600/data/models/alarm.dart';
 import 'package:hive/hive.dart';
 
 part 'device.g.dart';
 
 @HiveType(typeId: 1)
-class Device {
+class Device extends HiveObject {
   @HiveField(0)
   String name;
 
@@ -19,11 +20,14 @@ class Device {
   @HiveField(4)
   bool isActive;
 
+  @HiveField(5)
+  HiveList<Alarm>? alarms;
+
   Device(
       {required this.name,
       required this.phone,
       this.password = "",
       required this.defaultSimCard,
-      this.isActive = false
-      });
+      this.isActive = false,
+      this.alarms});
 }

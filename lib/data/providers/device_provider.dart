@@ -1,3 +1,4 @@
+import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/data/repository/device_repository.dart';
 import 'package:ch600/utils/constants.dart';
@@ -8,9 +9,11 @@ var deviceRepositoryProvider = Provider((ref) => HiveDeviceRepository());
 
 class HiveDeviceRepository extends DeviceRepository {
   late Box<Device> _deviceBox;
+  late Box<Alarm> _alarmBox;
 
   HiveDeviceRepository() {
     _deviceBox = Hive.box<Device>(deviceDB);
+    _alarmBox = Hive.box<Alarm>(alarmDB);
   }
 
   @override
@@ -22,7 +25,6 @@ class HiveDeviceRepository extends DeviceRepository {
   void addDevice(Device device) {
     _deviceBox.add(device);
   }
-
 
   @override
   void updateDevice(MapEntry<dynamic, Device> entry) {
@@ -65,14 +67,28 @@ class HiveDeviceRepository extends DeviceRepository {
   }
 
   void deactivateAllDevices() {
-    _deviceBox
-        .toMap()
-        .entries
-        .forEach((element) {
+    _deviceBox.toMap().entries.forEach((element) {
       element.value.isActive = false;
       _deviceBox.put(element.key, element.value);
     });
   }
 
+  @override
+  List<Alarm> getAlarmsForActiveDevice() {
+    var device = getActiveDevice();
+    var alarms =
+        (device?.value.alarms ?? const Iterable<Alarm>.empty()).toList();
+    return alarms;
+  }
 
+  @override
+  void addAlarmForActiveDevice(Alarm alarm) {
+    var device = getActiveDevice();
+    if(device==null) return;
+     if(device.value.alarms==null || device.value.alarms?.isEmpty==true){
+       device.value.alarms = HiveList(_alarmBox);
+     }
+    device.value.alarms!.add(alarm);
+     _deviceBox.put(device.key, device.value);
+  }
 }
