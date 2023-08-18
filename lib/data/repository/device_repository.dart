@@ -18,4 +18,8 @@ abstract class DeviceRepository {
   List<Alarm> getAlarmsForActiveDevice();
 
   void addAlarmForActiveDevice(Alarm alarm);
+
+  void removeAlarmFromActiveDevice(Alarm alarm);
+
+  void updateAlarmForActiveDevice(Alarm alarmToUpdate,Alarm newAlarm);
 }

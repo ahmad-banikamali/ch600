@@ -63,7 +63,7 @@ class _AddNewDeviceState extends State<AddNewDevice> {
               autofocus: true,
               style: const TextStyle(color: Colors.red),
               decoration: InputDecoration(
-                  label: Text(deviceName),
+                label: Text(deviceName),
               ),
               validator: (value) {
                 if (value?.isEmpty == true) {
@@ -147,16 +147,16 @@ class _AddNewDeviceState extends State<AddNewDevice> {
           ),
           TextButton(
             onPressed: () async {
-              if (_formKey.currentState?.validate() == true) {
-                _formKey.currentState?.save();
-                widget.onSaveClick(MapEntry(
-                    widget.deviceMapEntry?.key,
-                    Device(
-                        name: name,
-                        phone: phone,
-                        defaultSimCard: defaultSimCard,
-                        password: password)));
-              }
+              if (_formKey.currentState?.validate() == false) return;
+
+              _formKey.currentState?.save();
+              widget.onSaveClick(MapEntry(
+                  widget.deviceMapEntry?.key,
+                  Device(
+                      name: name,
+                      phone: phone,
+                      defaultSimCard: defaultSimCard,
+                      password: password)));
             },
             child: Text(accept),
           ),

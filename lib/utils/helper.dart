@@ -21,6 +21,13 @@ bool isPhoneNumberValid(String value) {
 }
 
 extension ExtendedString on State {
+
+  void refresh(){
+    setState(() {
+
+    });
+  }
+
   void pushScreen(Widget route) {
     Navigator.of(context).push(MaterialPageRoute(builder: (c) => route));
   }
@@ -34,5 +41,7 @@ extension ExtendedString on State {
     pushScreen(route);
   }
 }
+
+
 
 void sendMessage(String code) {}

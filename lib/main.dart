@@ -1,5 +1,5 @@
 import 'package:ch600/ui/screens/home_screen.dart';
-import 'package:ch600/ui/screens/timer_screen.dart';
+import 'package:ch600/ui/screens/alarms_screen.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class MainApp extends StatelessWidget {
           appBarTheme: const AppBarTheme().copyWith(
               backgroundColor: Theme.of(context).colorScheme.primary)),
       // home: HomeScreen(title: appName),
-      home: const TimerScreen(),
+      home: const AlarmScreen(),
     );
   }
 }

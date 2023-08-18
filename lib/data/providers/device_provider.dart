@@ -84,11 +84,26 @@ class HiveDeviceRepository extends DeviceRepository {
   @override
   void addAlarmForActiveDevice(Alarm alarm) {
     var device = getActiveDevice();
-    if(device==null) return;
-     if(device.value.alarms==null || device.value.alarms?.isEmpty==true){
-       device.value.alarms = HiveList(_alarmBox);
-     }
+    if (device == null) return;
+    if (device.value.alarms == null || device.value.alarms?.isEmpty == true) {
+      device.value.alarms = HiveList(_alarmBox);
+    }
+    _alarmBox.add(alarm);
     device.value.alarms!.add(alarm);
-     _deviceBox.put(device.key, device.value);
+    device.value.save();
+  }
+
+  @override
+  void removeAlarmFromActiveDevice(Alarm alarm) {
+    alarm.delete();
+  }
+
+  @override
+  void updateAlarmForActiveDevice(Alarm alarmToUpdate, Alarm newAlarm) {
+    alarmToUpdate.hour = newAlarm.hour;
+    alarmToUpdate.minute = newAlarm.minute;
+    alarmToUpdate.codeToSend = newAlarm.codeToSend;
+    alarmToUpdate.dayOfWeek = newAlarm.dayOfWeek;
+    alarmToUpdate.save();
   }
 }

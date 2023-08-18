@@ -2,7 +2,7 @@
 
 import 'package:ch600/ui/screens/home_screen.dart';
 import 'package:ch600/ui/screens/inbox_screen.dart';
-import 'package:ch600/ui/screens/timer_screen.dart';
+import 'package:ch600/ui/screens/alarms_screen.dart';
 import 'package:ch600/ui/ui_models/advance_screen_button.dart';
 import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/device_drop_down.dart';
@@ -63,7 +63,7 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
       AdvanceScreenButton(
           title: timers,
           action: () {
-            pushScreen(const TimerScreen());
+            pushScreen(const AlarmScreen());
           },
           iconName: "timer"),
       AdvanceScreenButton(title: emergency, codeToSend: "70", iconName: "bell"),
