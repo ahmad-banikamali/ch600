@@ -61,9 +61,15 @@ class _AddNewDeviceState extends State<AddNewDevice> {
             title: TextFormField(
               initialValue: name,
               autofocus: true,
-              style: const TextStyle(color: Colors.red),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.black),
               decoration: InputDecoration(
-                label: Text(deviceName),
+                label: Text(deviceName,style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Colors.black),),
               ),
               validator: (value) {
                 if (value?.isEmpty == true) {
@@ -80,8 +86,14 @@ class _AddNewDeviceState extends State<AddNewDevice> {
             onTap: null,
             title: TextFormField(
               initialValue: phone,
-              style: const TextStyle(color: Colors.red),
-              decoration: InputDecoration(label: Text(devicePhone)),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.black),
+              decoration: InputDecoration(label: Text(devicePhone,style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.black),)),
               validator: (value) {
                 if (value?.isEmpty == true) {
                   return 'لطفا شماره تلفن دستگاه را وارد کنید';
@@ -97,8 +109,14 @@ class _AddNewDeviceState extends State<AddNewDevice> {
             onTap: null,
             title: TextFormField(
               initialValue: password,
-              style: const TextStyle(color: Colors.red),
-              decoration: InputDecoration(label: Text(changePassword)),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.black),
+              decoration: InputDecoration(label: Text(changePassword,style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.black),)),
               validator: (value) {
                 return null;
               },
@@ -117,13 +135,19 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                 children: [
                   Text(
                     chooseSimCard,
-                    style: const TextStyle(color: Colors.red),
+                    style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.black),
                   ),
                   DropdownButtonHideUnderline(
                     child: DropdownButton(
                         key: _dropdownButtonKey,
                         elevation: 0,
-                        style: const TextStyle(color: Colors.red),
+                        style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.black),
                         value: defaultSimCard,
                         items: const [
                           DropdownMenuItem(
@@ -148,7 +172,6 @@ class _AddNewDeviceState extends State<AddNewDevice> {
           TextButton(
             onPressed: () async {
               if (_formKey.currentState?.validate() == false) return;
-
               _formKey.currentState?.save();
               widget.onSaveClick(MapEntry(
                   widget.deviceMapEntry?.key,

@@ -8,6 +8,13 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
+
+  @override
+  void setState(VoidCallback fn) async {
+    // TODO: implement setState
+    super.setState(fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     return const Placeholder(child: Text("inbox screen"),);

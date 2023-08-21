@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DeviceDropDown extends ConsumerStatefulWidget {
-  const DeviceDropDown({this.onDeviceSelected, super.key});
+  const DeviceDropDown({this.data, this.onDeviceSelected, super.key});
 
   final void Function()? onDeviceSelected;
+  final String? data;
 
   @override
   ConsumerState<DeviceDropDown> createState() => _DeviceDropDownState();
@@ -22,27 +23,29 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
 
   @override
   void initState() {
-    deviceRepository = HiveDeviceRepository();
-    activeDevice = deviceRepository.getActiveDevice();
-    allDevices = deviceRepository.getAllDevices();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    deviceRepository = HiveDeviceRepository();
+    allDevices = deviceRepository.getAllDevices();
+    var key2 = deviceRepository.getActiveDevice()?.key;
     return deviceRepository.getAllDevices().isEmpty
         ? TextButton(
-            child: Text("add new device"),
+            child: Text(
+              "add new device${widget.data}",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontSize: 15),
+            ),
             onPressed: () {
-              deviceRepository.addDevice(Device(
-                  name: "name",
-                  phone: "phone",
-                  defaultSimCard: "defaultSimCard"));
-              setState(() {});
+              openAddNewDeviceBottomSheet(context);
             },
           )
         : DropdownButton(
-            value: deviceRepository.getActiveDevice()?.key,
+            value: key2,
             items: [
               ...deviceRepository
                   .getAllDevices()
@@ -50,28 +53,39 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
                   .map((e) => DropdownMenuItem(
                         value: e.key,
                         child: Text(
-                          "${e.value.name}///${e.key}",
-                          style: const TextStyle(color: Colors.orange),
+                          "${e.value.name}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.black, fontSize: 15),
                         ),
                       )),
-              DropdownMenuItem(
-                value: null,
-                child: TextButton(
-                  child: Text("add new device"),
-                  onPressed: () {
-                    deviceRepository.addDevice(Device(
-                        name: "name",
-                        phone: "phone",
-                        defaultSimCard: "defaultSimCard"));
-                    setState(() {});
-                  },
-                ),
-              )
+
             ],
             onChanged: (key) {
               deviceRepository.activateDeviceWithKey(key);
               setState(() {});
               widget.onDeviceSelected?.call();
             });
+  }
+
+
+  void openAddNewDeviceBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: AddNewDevice(
+              onSaveClick: (newDeviceEntry) {
+                deviceRepository.addDevice(newDeviceEntry.value);
+                deviceRepository.activateLatestDevice();
+                setState(() {});
+                popScreen();
+              }
+            ),
+          );
+        });
   }
 }

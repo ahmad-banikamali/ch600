@@ -6,7 +6,6 @@ part 'alarm.g.dart';
 @HiveType(typeId: 2)
 class Alarm extends HiveObject {
 
-
   @HiveField(1)
   String hour;
 

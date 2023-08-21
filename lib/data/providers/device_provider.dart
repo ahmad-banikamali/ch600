@@ -1,4 +1,3 @@
-import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/data/repository/device_repository.dart';
 import 'package:ch600/utils/constants.dart';
@@ -9,11 +8,9 @@ var deviceRepositoryProvider = Provider((ref) => HiveDeviceRepository());
 
 class HiveDeviceRepository extends DeviceRepository {
   late Box<Device> _deviceBox;
-  late Box<Alarm> _alarmBox;
 
   HiveDeviceRepository() {
-    _deviceBox = Hive.box<Device>(deviceDB);
-    _alarmBox = Hive.box<Alarm>(alarmDB);
+    _deviceBox = Hive.box<Device>(DbConstants.deviceDB);
   }
 
   @override
@@ -27,21 +24,31 @@ class HiveDeviceRepository extends DeviceRepository {
   }
 
   @override
-  void updateDevice(MapEntry<dynamic, Device> entry) {
-    if (entry.key == null) {
-      addDevice(entry.value);
+  void updateDevice(MapEntry<dynamic, Device>? oldDevice,
+      MapEntry<dynamic, Device> newDevice) {
+    if (oldDevice == null) {
+      addDevice(newDevice.value);
     } else {
-      _deviceBox.put(entry.key, entry.value);
+      refreshOldDevice(oldDevice.value, newDevice.value);
+      _deviceBox.put(oldDevice.key, oldDevice.value);
     }
+  }
+
+  void refreshOldDevice(Device oldDevice, Device newDevice) {
+    oldDevice.name = newDevice.name;
+    oldDevice.password = newDevice.password;
+    oldDevice.defaultSimCard = newDevice.defaultSimCard;
+    oldDevice.phone = newDevice.phone;
   }
 
   @override
   MapEntry<dynamic, Device>? getActiveDevice() {
     try {
-      return _deviceBox
+      var firstWhere = _deviceBox
           .toMap()
           .entries
           .firstWhere((element) => element.value.isActive);
+      return firstWhere;
     } catch (_) {
       return null;
     }
@@ -71,39 +78,5 @@ class HiveDeviceRepository extends DeviceRepository {
       element.value.isActive = false;
       _deviceBox.put(element.key, element.value);
     });
-  }
-
-  @override
-  List<Alarm> getAlarmsForActiveDevice() {
-    var device = getActiveDevice();
-    var alarms =
-        (device?.value.alarms ?? const Iterable<Alarm>.empty()).toList();
-    return alarms;
-  }
-
-  @override
-  void addAlarmForActiveDevice(Alarm alarm) {
-    var device = getActiveDevice();
-    if (device == null) return;
-    if (device.value.alarms == null || device.value.alarms?.isEmpty == true) {
-      device.value.alarms = HiveList(_alarmBox);
-    }
-    _alarmBox.add(alarm);
-    device.value.alarms!.add(alarm);
-    device.value.save();
-  }
-
-  @override
-  void removeAlarmFromActiveDevice(Alarm alarm) {
-    alarm.delete();
-  }
-
-  @override
-  void updateAlarmForActiveDevice(Alarm alarmToUpdate, Alarm newAlarm) {
-    alarmToUpdate.hour = newAlarm.hour;
-    alarmToUpdate.minute = newAlarm.minute;
-    alarmToUpdate.codeToSend = newAlarm.codeToSend;
-    alarmToUpdate.dayOfWeek = newAlarm.dayOfWeek;
-    alarmToUpdate.save();
   }
 }

@@ -7,19 +7,11 @@ abstract class DeviceRepository {
 
   void addDevice(Device device);
 
-  void updateDevice(MapEntry<dynamic, Device> entry);
+  void updateDevice(MapEntry<dynamic, Device> oldDevice,MapEntry<dynamic, Device> newDevice);
 
   MapEntry<dynamic, Device>? getActiveDevice();
 
   void activateDeviceWithKey(dynamic key);
 
   void activateLatestDevice();
-
-  List<Alarm> getAlarmsForActiveDevice();
-
-  void addAlarmForActiveDevice(Alarm alarm);
-
-  void removeAlarmFromActiveDevice(Alarm alarm);
-
-  void updateAlarmForActiveDevice(Alarm alarmToUpdate,Alarm newAlarm);
 }

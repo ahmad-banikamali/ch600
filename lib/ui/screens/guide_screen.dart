@@ -12,9 +12,9 @@ class _GuideScreenState extends State<GuideScreen> {
   var c = WebViewController();
 
   @override
-  void initState() async {
+  void initState()   {
     super.initState();
-    await c.loadFlutterAsset('assets/statics/help.htm');
+      c.loadFlutterAsset('assets/statics/help.htm');
   }
 
   @override

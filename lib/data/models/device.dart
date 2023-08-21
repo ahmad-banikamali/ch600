@@ -30,4 +30,11 @@ class Device extends HiveObject {
       required this.defaultSimCard,
       this.isActive = false,
       this.alarms});
+
+  @override
+  String toString() {
+    return 'Device{name: $name, phone: $phone, password: $password, defaultSimCard: $defaultSimCard, isActive: $isActive, alarms: $alarms}';
+  }
+
+
 }
