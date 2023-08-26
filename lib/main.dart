@@ -1,14 +1,10 @@
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/ui/screens/home_screen.dart';
-import 'package:ch600/ui/screens/alarms_screen.dart';
-import 'package:ch600/ui/screens/lock_screen.dart';
-import 'package:ch600/ui/screens/settings_screen.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,8 +12,18 @@ void main() async {
   runApp(const ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +41,18 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: ThemeData(
+        primaryColor: Colors.black,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black) ,
         useMaterial3: true,
+        appBarTheme: AppBarTheme().copyWith(
+          backgroundColor: Colors.black87
+        )
       ).copyWith(
           textTheme: const TextTheme().copyWith(
               titleMedium: const TextStyle().copyWith(
                   color: Theme.of(context).colorScheme.onBackground,
                   fontFamily: "bYekan",
-                  fontSize: 20)),
-          appBarTheme: const AppBarTheme().copyWith(
-              backgroundColor: Theme.of(context).colorScheme.primary)),
+                  fontSize: 20))),
       home: HomeScreen(),
       // home: showLockScreen ?   LockScreen() :   SettingsScreen(),
     );

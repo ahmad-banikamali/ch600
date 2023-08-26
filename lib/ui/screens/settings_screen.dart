@@ -42,9 +42,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(setting,style: Theme.of(context)
-              .textTheme
-              .titleMedium!,),
+          title: Text(
+            setting,
+            style: Theme.of(context).textTheme.titleMedium!,
+          ),
         ),
         body: SingleChildScrollView(
           physics: ScrollPhysics(),
@@ -89,7 +90,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 margin: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                     color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.all(Radius.circular(16))),
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
                 child: InkWell(
                   onTap: () {
                     showModalBottomSheet(
@@ -112,7 +113,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
               ),
 
-
+              Container(
+                height: 1,
+                width: double.infinity,
+                color: Colors.black45,
+                margin: EdgeInsets.all(24),
+              ),
               Text(
                 devices,
                 style: Theme.of(context)
@@ -133,29 +139,41 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     },
                     child: ListTile(
                       leading: Text(
-                          deviceRepository.getAllDevices()[i]!.name
- ,
+                        deviceRepository.getAllDevices()[i]!.name,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black, fontSize: 15),
                       ),
-                      trailing: Text(deviceRepository.getAllDevices()[i]!.phone,
+                      trailing: Text(
+                        deviceRepository.getAllDevices()[i]!.phone,
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
-                            .copyWith(color: Colors.black, fontSize: 15),),
-
+                            .copyWith(color: Colors.black, fontSize: 15),
+                      ),
                     ),
                   );
                 },
                 itemCount: deviceRepository.getAllDevices().length,
               ),
-              TextButton(
-                  onPressed: () {
-                    openAddNewDeviceBottomSheet(context);
-                  },
-                  child: Text(addNewDevice))
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.all(16),
+                decoration: BoxDecoration(color: Colors.grey.shade300,borderRadius: BorderRadius.all(Radius.circular(8))),
+
+                child: TextButton(
+                    onPressed: () {
+                      openAddNewDeviceBottomSheet(context);
+                    },
+                    child: Text(
+                      addNewDevice,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.onBackground, fontSize: 15),
+                    )),
+              )
             ],
           ),
         ),

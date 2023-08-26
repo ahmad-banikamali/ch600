@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DeviceDropDown extends ConsumerStatefulWidget {
-  const DeviceDropDown({this.data, this.onDeviceSelected, super.key});
+  const DeviceDropDown({this.data, this.onDeviceSelected, super.key,this.onNewDeviceAdded});
 
   final void Function()? onDeviceSelected;
   final String? data;
+  final void Function()? onNewDeviceAdded;
 
   @override
   ConsumerState<DeviceDropDown> createState() => _DeviceDropDownState();
@@ -20,6 +21,7 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
   late MapEntry<dynamic, Device>? activeDevice;
   late Map<dynamic, Device> allDevices;
   late DeviceRepository deviceRepository;
+
 
   @override
   void initState() {
@@ -31,10 +33,10 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
     deviceRepository = HiveDeviceRepository();
     allDevices = deviceRepository.getAllDevices();
     var key2 = deviceRepository.getActiveDevice()?.key;
-    return deviceRepository.getAllDevices().isEmpty
-        ? TextButton(
+    if (deviceRepository.getAllDevices().isEmpty) {
+      return TextButton(
             child: Text(
-              "add new device${widget.data}",
+              "افزودن دستگاه جدید${widget.data}",
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
@@ -43,9 +45,11 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
             onPressed: () {
               openAddNewDeviceBottomSheet(context);
             },
-          )
-        : DropdownButton(
+          );
+    } else {
+      return DropdownButton(
             value: key2,
+          dropdownColor: Theme.of(context).primaryColor,
             items: [
               ...deviceRepository
                   .getAllDevices()
@@ -57,7 +61,7 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
-                              .copyWith(color: Colors.black, fontSize: 15),
+                              .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: 15),
                         ),
                       )),
 
@@ -67,10 +71,11 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
               setState(() {});
               widget.onDeviceSelected?.call();
             });
+    }
   }
 
 
-  void openAddNewDeviceBottomSheet(BuildContext context) {
+  void openAddNewDeviceBottomSheet(BuildContext context,) {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -83,6 +88,7 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
                 deviceRepository.activateLatestDevice();
                 setState(() {});
                 popScreen();
+                widget.onNewDeviceAdded?.call();
               }
             ),
           );

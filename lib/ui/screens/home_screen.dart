@@ -28,7 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late List<MainScreenButton> buttonData;
   final baseIconDir = "assets/images/icons_main_screen/";
   final iconExtension = ".png";
-  var data = "d";
+  var data = "";
   late bool showLockScreen;
   late Device? activeDevice;
 
@@ -50,10 +50,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: activate,
           action: () {
             if (activeDevice == null) {
-              return;
+              var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
             else {
-              sendMessage("11", activeDevice!);
+              sendMessage("11", activeDevice!,(){
+                var snackBar = const SnackBar(content: Text('پیام با موفقیت ارسال شد'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              });
             }
           },
           iconName: "lock"),
@@ -62,10 +66,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: deactivate,
           action: () {
             if (activeDevice == null) {
-              return;
+              var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
             else {
-              sendMessage("00", activeDevice!);
+              sendMessage("00", activeDevice!, () {
+                var snackBar = const SnackBar(
+                    content: Text('پیام با موفقیت ارسال شد'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              });
             }
           },
           iconName: "unlock"),

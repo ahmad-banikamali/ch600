@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sms/flutter_sms.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_advanced/sms_advanced.dart';
@@ -73,21 +74,13 @@ extension ExtendedString on String {
   }
 }
 
-void sendMessage(String code, Device device) async {
-/*  SimCardsProvider provider = SimCardsProvider();
-  var a = await provider.getSimCards();
-  print(a);*/
-
-
-
-  // SimCardsProvider provider = SimCardsProvider();
-  // var a = await provider.getSimCards();
-
+void sendMessage(String code, Device device,callback) async {
   if (await Permission.sms.request().isGranted) {
     SmsSender sender = SmsSender();
-    await sender.sendSms(SmsMessage(
+    var smsMessage = await sender.sendSms(SmsMessage(
       device.phone,
       "${device.password}#$code",
     ));
+    callback();
   } else {}
 }

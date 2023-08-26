@@ -49,6 +49,9 @@ dependencies:
   sms_advanced: ^1.1.0
   flutter_sms: ^2.3.3
   permission_handler: ^10.4.3
+  pin_code_fields: ^8.0.1
+  simnumber: ^0.0.12
+
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +82,9 @@ flutter:
     - assets/images/
     - assets/images/icons_advance_screen/
     - assets/images/icons_main_screen/
+
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

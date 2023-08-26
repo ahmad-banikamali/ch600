@@ -68,14 +68,14 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
           title: deactivateConnection,
           codeToSend: "51",
           iconName: "user_deactive"),
-      AdvanceScreenButton(
-          title: timers,
-          action: () async {
-            await pushScreen(const AlarmScreen());
-            data = data  ;
-            setState(() {});
-          },
-          iconName: "timer"),
+      // AdvanceScreenButton(
+      //     title: timers,
+      //     action: () async {
+      //       await pushScreen(const AlarmScreen());
+      //       data = data;
+      //       setState(() {});
+      //     },
+      //     iconName: "timer"),
       AdvanceScreenButton(title: emergency, codeToSend: "70", iconName: "bell"),
       AdvanceScreenButton(
           title: messagesInbox,
@@ -107,8 +107,9 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
                 const Background(),
                 GridView.builder(
                     itemCount: buttonData.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
                     itemBuilder: (c, i) {
                       var button = buttonData[i];
 
@@ -139,22 +140,21 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
                                 ),
                                 Text(
                                   button.title,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 )
                               ],
                             )),
                       );
                     }),
-
               ],
             ),
           ),
-          if(showLockScreen) LockScreen(onSuccess: (){
-            showLockScreen = false;
-            setState(() {
-
-            });
-          })
+          if (showLockScreen)
+            LockScreen(onSuccess: () {
+              showLockScreen = false;
+              setState(() {});
+            })
         ],
       ),
     );
@@ -162,18 +162,19 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
 
   void handleSendMessage(String codeToSend) {
     var device = deviceRepository.getActiveDevice()?.value;
-    if(device==null) {
+    if (device == null) {
       showNoDeviceFoundDialog();
       return;
     }
-    sendMessage(codeToSend, device);
+
+    sendMessage(codeToSend, device, () {
+      var snackBar = const SnackBar(content: Text('پیام با موفقیت ارسال شد'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
   }
 
   void showNoDeviceFoundDialog() {
-    showDialog(context: context, builder: (_){
-      return const Text("لطفا ابتدا یک دستگاه را انتخاب کنید",style: TextStyle(
-        color: Colors.black
-      ),);
-    });
+    var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
