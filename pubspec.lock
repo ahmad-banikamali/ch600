@@ -215,7 +215,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_lints:
-    dependency: "direct dev"
+    dependency: "direct overridden"
     description:
       name: flutter_lints
       sha256: "2118df84ef0c3ca93f96123a616ae8540879991b8b57af2f81b76a7ada49b2a4"
@@ -243,14 +243,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.7"
-  flutter_sms:
+  flutter_sms_dual:
     dependency: "direct main"
     description:
-      name: flutter_sms
-      sha256: "2fe5f584f02596343557eeca56348f9b82413fefe83a423fab880cdbdf54d8d8"
+      name: flutter_sms_dual
+      sha256: f7a06bd5dfbca2b57ec977a8f6f67690c2b1db5363a3682460d7d1b44b8de431
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.3"
+    version: "0.0.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter

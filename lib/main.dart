@@ -1,3 +1,4 @@
+import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/ui/screens/home_screen.dart';
 import 'package:ch600/utils/constants.dart';
@@ -10,6 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initHive();
   runApp(const ProviderScope(child: MainApp()));
+  // await initAlarm();
+  setAlarm(Device(name: "name", phone: "09214337396", defaultSimCard: "1"), Alarm(hour: "3", minute: "4", dayOfWeek: "5", codeToSend: DateTime.now().toString()));
 }
 
 class MainApp extends StatefulWidget {

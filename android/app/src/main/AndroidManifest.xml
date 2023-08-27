@@ -5,11 +5,14 @@
         android:name="android.hardware.telephony"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission android:name="android.permission.WAKREAD_PHONE_STATEE_LOCK"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <queries>
         <intent>
@@ -50,8 +53,11 @@
             android:value="2" />
 
 
-
-
+        <receiver android:name=".MessageSender"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":remote"
+            />
 
     </application>
 </manifest>

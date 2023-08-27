@@ -100,6 +100,16 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
             appBar: AppBar(
               title: DeviceDropDown(
                 data: data,
+                onNewDeviceAdded: (){
+                  setState(() {
+
+                  });
+                },
+                onDeviceSelected: (){
+                  setState(() {
+
+                  });
+                },
               ),
             ),
             body: Stack(

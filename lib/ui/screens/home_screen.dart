@@ -12,6 +12,7 @@ import 'package:ch600/ui/widgets/logo.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 
@@ -31,16 +32,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   var data = "";
   late bool showLockScreen;
   late Device? activeDevice;
+  DeviceRepository deviceRepository = HiveDeviceRepository();
 
   @override
   void initState() {
     super.initState();
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnHomeScreen, defaultValue: false);
-    DeviceRepository deviceRepository = HiveDeviceRepository();
-    activeDevice = deviceRepository
-        .getActiveDevice()
-        ?.value;
+
   }
 
   void initButtonData() {
@@ -113,9 +112,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ];
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     initButtonData();
+    activeDevice = deviceRepository
+        .getActiveDevice()
+        ?.value;
+
+
+
     return Stack(
       children: [
         Scaffold(
@@ -123,6 +131,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               automaticallyImplyLeading: false,
               title: DeviceDropDown(
                 data: data,
+                onNewDeviceAdded: (){
+                  setState(() {
+
+                  });
+                },
+                onDeviceSelected: (){
+                  setState(() {
+
+                  });
+                },
               ),
               actions: [
                 Padding(
