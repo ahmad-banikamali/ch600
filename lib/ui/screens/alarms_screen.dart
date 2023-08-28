@@ -28,8 +28,9 @@ class _AlarmScreenState extends State<AlarmScreen> {
   late List<String> minuteList;
   late List<String> hourList;
   late List<String> dayWeekList;
-  late List<int> codeList;
+  late List<String> codeList;
   late var pickerData;
+  var data = "";
 
   @override
   void initState() {
@@ -46,7 +47,22 @@ class _AlarmScreenState extends State<AlarmScreen> {
       WeekDay.thursday,
       WeekDay.friday,
     ];
-    codeList = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
+    codeList = [
+      "00",
+      "10",
+      "11",
+      "12",
+      "15",
+      "40",
+      "41",
+      "45",
+      "46",
+      "50",
+      "51",
+      "70",
+      "99",
+    ].toList();
+
     minuteList = List.generate(60, (index) => index.addZeroToString());
     hourList = List.generate(24, (index) => index.addZeroToString());
     pickerData = [
@@ -73,8 +89,14 @@ class _AlarmScreenState extends State<AlarmScreen> {
           child: const Icon(Icons.add)),
       appBar: AppBar(
         title: DeviceDropDown(
+          data: data,
           onDeviceSelected: () {
             setState(() {});
+          },
+          onNewDeviceAdded: (){
+            setState(() {
+
+            });
           },
         ),
         actions: [
@@ -90,7 +112,9 @@ class _AlarmScreenState extends State<AlarmScreen> {
         children: [
           // Background(),
           ListView.builder(
-              itemCount: alarmRepository.getAlarmsForActiveDevice().length,
+              itemCount: alarmRepository
+                  .getAlarmsForActiveDevice()
+                  .length,
               itemBuilder: (c, i) {
                 var currentAlarm = alarmsForActiveDevice[i];
                 // var currentAlarm = Alarm(
@@ -102,21 +126,24 @@ class _AlarmScreenState extends State<AlarmScreen> {
                     children: [
                       Text(
                         "${currentAlarm.hour}:${currentAlarm.minute}",
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
                       Text(
                         currentAlarm.dayOfWeek.toDayOfWeek(),
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
                       Text(
                         currentAlarm.codeToSend,
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
@@ -127,23 +154,24 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       InkWell(
                         child: Text(
                           "ویرایش",
-                          style: Theme.of(context)
+                          style: Theme
+                              .of(context)
                               .textTheme
                               .titleMedium!
                               .copyWith(color: Colors.black),
                         ),
-                        onLongPress: (){
-                          alarmRepository.removeAlarmFromActiveDevice(currentAlarm);
+                        onLongPress: () {
+                          alarmRepository.removeAlarmFromActiveDevice(
+                              currentAlarm);
                         },
                         onTap: () {
                           showPicker(
                             currentAlarm,
                             context,
-                            (alarm) {
+                                (alarm) {
                               alarmRepository.updateAlarmForActiveDevice(
                                   currentAlarm, alarm);
-                              setState(() {
-                              });
+                              setState(() {});
                             },
                           );
                         },
@@ -151,7 +179,8 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       InkWell(
                         child: Text(
                           "حذف",
-                          style: Theme.of(context)
+                          style: Theme
+                              .of(context)
                               .textTheme
                               .titleMedium!
                               .copyWith(color: Colors.black),
@@ -203,23 +232,25 @@ class _AlarmScreenState extends State<AlarmScreen> {
       minuteIndex = minuteList.indexOf(currentAlarm.minute);
       dayOfWeekIndex =
           dayWeekList.indexOf(currentAlarm.dayOfWeek.toDayOfWeek());
-      codeToSendIndex = codeList.indexOf(int.parse(currentAlarm.codeToSend));
+      codeToSendIndex = codeList.indexOf(currentAlarm.codeToSend);
     }
 
     Picker(
         hideHeader: false,
         confirmText: accept,
         cancelText: cancel,
-        selectedTextStyle: Theme.of(context)
+        selectedTextStyle: Theme
+            .of(context)
             .textTheme
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
-        textStyle: Theme.of(context)
+        textStyle: Theme
+            .of(context)
             .textTheme
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
         onConfirm: (picker, data) {
-          var selectedDay =  data[1].toString() ;
+          var selectedDay = data[1].toString();
           var selectedMinute = minuteList[data[2]];
           var selectedHour = hourList[data[3]];
           var selectedCode = codeList[data[5]];
@@ -227,7 +258,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
               hour: selectedHour,
               minute: selectedMinute,
               dayOfWeek: selectedDay,
-              codeToSend: selectedCode.toString()));
+              codeToSend: selectedCode));
         },
         selecteds: [
           0,

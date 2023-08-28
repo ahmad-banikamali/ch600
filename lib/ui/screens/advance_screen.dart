@@ -68,14 +68,14 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
           title: deactivateConnection,
           codeToSend: "51",
           iconName: "user_deactive"),
-      // AdvanceScreenButton(
-      //     title: timers,
-      //     action: () async {
-      //       await pushScreen(const AlarmScreen());
-      //       data = data;
-      //       setState(() {});
-      //     },
-      //     iconName: "timer"),
+      AdvanceScreenButton(
+          title: timers,
+          action: () async {
+            await pushScreen(const AlarmScreen());
+            data = data;
+            setState(() {});
+          },
+          iconName: "timer"),
       AdvanceScreenButton(title: emergency, codeToSend: "70", iconName: "bell"),
       AdvanceScreenButton(
           title: messagesInbox,

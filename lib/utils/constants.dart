@@ -288,6 +288,14 @@ class WeekDay {
     }
   }
 
+  static String get everyday {
+    if (currentLang == "fa") {
+      return "هرروز";
+    } else {
+      return "everyday";
+    }
+  }
+
   static String get error {
     if (currentLang == "fa") {
       return "خطا: روز هفته نمی باشد";

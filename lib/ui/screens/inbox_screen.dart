@@ -1,5 +1,7 @@
 import 'package:ch600/data/models/message.dart';
 import 'package:ch600/data/providers/MessageProvider.dart';
+import 'package:ch600/data/providers/device_provider.dart';
+import 'package:ch600/data/repository/device_repository.dart';
 import 'package:ch600/data/repository/messages_repository.dart';
 import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/bubble.dart';
@@ -16,29 +18,29 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   late MessagesRepository messageRepository;
+  late DeviceRepository deviceRepository;
   var data = "";
 
   @override
   void initState() {
     messageRepository = DefaultMessageRepository();
+    deviceRepository = HiveDeviceRepository();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var activeDevice = deviceRepository.getActiveDevice();
+
     return Scaffold(
       appBar: AppBar(
         title: DeviceDropDown(
           data: data,
-          onNewDeviceAdded: (){
-            setState(() {
-
-            });
+          onNewDeviceAdded: () {
+            setState(() {});
           },
-          onDeviceSelected: (){
-            setState(() {
-
-            });
+          onDeviceSelected: () {
+            setState(() {});
           },
         ),
       ),
@@ -54,10 +56,10 @@ class _InboxScreenState extends State<InboxScreen> {
                   child: Text(
                       snapshot.data == null
                           ? "در حال دریافت اطلاعات"
-                          : "پیامی با این دستگاه مبادله نشده است",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!),
+                          : activeDevice == null
+                              ? "ابتدا یک دستگاه تعریف کنید"
+                              : "پیامی با این دستگاه مبادله نشده است",
+                      style: Theme.of(context).textTheme.titleMedium!),
                 );
               }
               List<Message> messages = snapshot.data!;
