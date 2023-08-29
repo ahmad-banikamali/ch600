@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/device_repository.dart';
@@ -33,6 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late bool showLockScreen;
   late Device? activeDevice;
   DeviceRepository deviceRepository = HiveDeviceRepository();
+  late List<bool> clickData;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnHomeScreen, defaultValue: false);
 
+    clickData = [for (var i = 0; i < 2; ++i) false];
   }
 
   void initButtonData() {
@@ -48,33 +52,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           backgroundColor: Colors.blue,
           title: activate,
           action: () {
-            if (activeDevice == null) {
-              var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
-            else {
-              sendMessage("11", activeDevice!,(){
-                var snackBar = const SnackBar(content: Text('پیام با موفقیت ارسال شد'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            handleSendMessage("11", activeDevice, clickData[0], (isClicked) {
+              clickData[0] = isClicked;
+              setState(() {
+
               });
-            }
+            });
           },
           iconName: "lock"),
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: deactivate,
           action: () {
-            if (activeDevice == null) {
-              var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
-            else {
-              sendMessage("00", activeDevice!, () {
-                var snackBar = const SnackBar(
-                    content: Text('پیام با موفقیت ارسال شد'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            handleSendMessage("00", activeDevice, clickData[1], (isClicked) {
+              clickData[1] = isClicked;
+              setState(() {
+
               });
-            }
+            });
           },
           iconName: "unlock"),
       MainScreenButton(
@@ -112,17 +107,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ];
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     initButtonData();
-    activeDevice = deviceRepository
-        .getActiveDevice()
-        ?.value;
-
-
+    activeDevice = deviceRepository.getActiveDevice()?.value;
 
     return Stack(
       children: [
@@ -131,15 +119,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               automaticallyImplyLeading: false,
               title: DeviceDropDown(
                 data: data,
-                onNewDeviceAdded: (){
-                  setState(() {
-
-                  });
+                onNewDeviceAdded: () {
+                  setState(() {});
                 },
-                onDeviceSelected: (){
-                  setState(() {
-
-                  });
+                onDeviceSelected: () {
+                  setState(() {});
                 },
               ),
               actions: [
@@ -178,14 +162,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     clipBehavior: Clip.antiAlias,
                                     child: MaterialButton(
                                       padding: const EdgeInsets.all(5),
-                                      onPressed: button.action,
+                                      onPressed: () {},
                                       child: IconButton(
                                         onPressed: button.action,
                                         icon: ClipOval(
                                             child: Image.asset(
-                                              "$baseIconDir${button
-                                                  .iconName}$iconExtension",
-                                            )),
+                                          "$baseIconDir${button.iconName}$iconExtension",
+                                        )),
                                       ),
                                     ),
                                   ),
@@ -195,10 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   Text(
                                     button.title,
                                     style:
-                                    Theme
-                                        .of(context)
-                                        .textTheme
-                                        .titleMedium,
+                                        Theme.of(context).textTheme.titleMedium,
                                   )
                                 ],
                               );
@@ -209,12 +189,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             )),
-        if (showLockScreen) LockScreen(onSuccess: () {
-          showLockScreen = false;
-          setState(() {
-
-          });
-        },)
+        if (showLockScreen)
+          LockScreen(
+            onSuccess: () {
+              showLockScreen = false;
+              setState(() {});
+            },
+          )
       ],
     );
   }

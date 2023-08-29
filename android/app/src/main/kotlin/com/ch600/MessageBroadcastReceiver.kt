@@ -58,6 +58,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
     fun setAlarm(context: Context, call: MethodCall) {
 
+
         val phone = call.argument<String>("phone")
         val password = call.argument<String>("password")
         val defaultSimCard = call.argument<String>("defaultSimCard")
@@ -92,7 +93,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val c = calendar(alarmDaySaturdayFirst, minute, hour)
 
-        alarmManager.cancel(pendingIntent)
+        removeAlarm(context, call)
 
         try {
             alarmManager.setExact(
@@ -161,7 +162,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
         val alarmId = intent.getIntExtra("alarmId", 0)
-        val isEveryDay = intent.getBooleanExtra("isEveryDay",false)
+        val isEveryDay = intent.getBooleanExtra("isEveryDay", false)
 
         pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -173,11 +174,12 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         showNotification(context)
         sendMessage(intent, context)
 
+        val oneDayMilliSeconds = 24 * 60 * 60 * 1000
 
         try {
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
-                Calendar.getInstance().timeInMillis + if (isEveryDay) 5000 else 20000,
+                Calendar.getInstance().timeInMillis + if (isEveryDay) oneDayMilliSeconds else 7 * oneDayMilliSeconds,
                 pendingIntent
             )
         } catch (e: Exception) {

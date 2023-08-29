@@ -145,7 +145,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       SizedBox(
                         width: 50,
                       ),
-                      InkWell(
+                      /*InkWell(
                         child: Text(
                           "ویرایش",
                           style: Theme.of(context)
@@ -168,7 +168,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                             },
                           );
                         },
-                      ),
+                      ),*/
                       InkWell(
                         child: Text(
                           "حذف",

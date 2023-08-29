@@ -19,7 +19,6 @@ Future<void> initHive() async {
   await Hive.openBox(DbConstants.etcDB);
 }
 
-
 void closeKeyboard() {
   FocusManager.instance.primaryFocus?.unfocus();
 }
@@ -40,6 +39,66 @@ extension ExtendedState on State {
   void replaceScreen(Widget route) {
     popScreen();
     pushScreen(route);
+  }
+
+  void handleSendMessage(String codeToSend, Device? device, isClicked,
+      void Function(bool) onClick) {
+    if (device == null) {
+      showSnackBar('لطفا ابتدا یک دستگاه تعریف کنید');
+      return;
+    }
+    if (isClicked) {
+      showSnackBar("از دستور قبلی حد اقل باید 10 ثانیه گذشته باشد");
+      Future.delayed(const Duration(milliseconds: 10000), () {
+        onClick(false);
+      });
+      return;
+    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text("آیا از ارسال دستور مطمئن هستید ؟",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Colors.black)),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  popScreen();
+                },
+                // function used to perform after pressing the button
+                child: Text('بی خیال',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.red)),
+              ),
+              TextButton(
+                onPressed: () {
+                  sendMessage(codeToSend, device, () {
+                    showSnackBar('پیام با موفقیت ارسال شد');
+                  });
+                  popScreen();
+                  onClick(true);
+                },
+                child: Text('تایید',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.green)),
+              ),
+            ],
+          );
+        });
+  }
+
+  void showSnackBar(String text) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    var snackBar = SnackBar(
+        content: Text(text, style: Theme.of(context).textTheme.titleMedium!));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
 
@@ -103,11 +162,10 @@ Future<void> setAlarm(Device device, Alarm alarm) async {
       'hour': alarm.hour,
       'minute': alarm.minute,
       'codeToSend': alarm.codeToSend,
-      'alarmId':alarm.key
+      'alarmId': alarm.key
     };
     await platform.invokeMethod('setAlarm', arguments);
-  } on PlatformException catch (e) {
-  }
+  } on PlatformException catch (e) {}
 }
 
 Future<void> removeAlarm(int alarmId) async {
@@ -116,6 +174,5 @@ Future<void> removeAlarm(int alarmId) async {
       'alarmId': alarmId,
     };
     await platform.invokeMethod('removeAlarm', arguments);
-  } on PlatformException catch (e) {
-  }
+  } on PlatformException catch (e) {}
 }

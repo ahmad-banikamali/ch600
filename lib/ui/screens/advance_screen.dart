@@ -1,8 +1,7 @@
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/device_repository.dart';
-import 'package:ch600/ui/screens/home_screen.dart';
-import 'package:ch600/ui/screens/inbox_screen.dart';
 import 'package:ch600/ui/screens/alarms_screen.dart';
+import 'package:ch600/ui/screens/inbox_screen.dart';
 import 'package:ch600/ui/screens/lock_screen.dart';
 import 'package:ch600/ui/ui_models/advance_screen_button.dart';
 import 'package:ch600/ui/widgets/background.dart';
@@ -27,12 +26,16 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
   final DeviceRepository deviceRepository = HiveDeviceRepository();
 
   late bool showLockScreen;
+  late List<bool> clickData;
 
   @override
   void initState() {
     initButtonData();
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnAdvanceScreen, defaultValue: false);
+
+    clickData = [for (var i = 0; i < 11; ++i) false];
+
     super.initState();
   }
 
@@ -100,15 +103,11 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
             appBar: AppBar(
               title: DeviceDropDown(
                 data: data,
-                onNewDeviceAdded: (){
-                  setState(() {
-
-                  });
+                onNewDeviceAdded: () {
+                  setState(() {});
                 },
-                onDeviceSelected: (){
-                  setState(() {
-
-                  });
+                onDeviceSelected: () {
+                  setState(() {});
                 },
               ),
             ),
@@ -124,7 +123,13 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
                       var button = buttonData[i];
 
                       void sendMessage() {
-                        handleSendMessage(button.codeToSend!);
+                        handleSendMessage(
+                            button.codeToSend!,
+                            deviceRepository.getActiveDevice()?.value,
+                            clickData[i], (isClicked) {
+                          clickData[i] = isClicked;
+                          setState(() {});
+                        });
                       }
 
                       return Center(
@@ -168,23 +173,5 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
         ],
       ),
     );
-  }
-
-  void handleSendMessage(String codeToSend) {
-    var device = deviceRepository.getActiveDevice()?.value;
-    if (device == null) {
-      showNoDeviceFoundDialog();
-      return;
-    }
-
-    sendMessage(codeToSend, device, () {
-      var snackBar = const SnackBar(content: Text('پیام با موفقیت ارسال شد'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    });
-  }
-
-  void showNoDeviceFoundDialog() {
-    var snackBar = const SnackBar(content: Text('لطفا ابتدا یک دستگاه تعریف کنید'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
