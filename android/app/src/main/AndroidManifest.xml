@@ -54,7 +54,7 @@
             android:value="2" />
 
 
-        <receiver android:name=".MessageSender"
+        <receiver android:name=".MessageBroadcastReceiver"
             android:enabled="true"
             android:exported="false"
             android:process=":remote"

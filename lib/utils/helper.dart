@@ -70,6 +70,8 @@ extension ExtendedString on String {
         dayOfWeek = WeekDay.thursday;
       case "6":
         dayOfWeek = WeekDay.friday;
+      case "-1":
+        dayOfWeek = WeekDay.everyday;
       default:
         dayOfWeek = WeekDay.error;
     }

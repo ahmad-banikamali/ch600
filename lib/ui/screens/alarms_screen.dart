@@ -46,6 +46,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
       WeekDay.wednesday,
       WeekDay.thursday,
       WeekDay.friday,
+      WeekDay.everyday,
     ];
     codeList = [
       "00",
@@ -93,10 +94,8 @@ class _AlarmScreenState extends State<AlarmScreen> {
           onDeviceSelected: () {
             setState(() {});
           },
-          onNewDeviceAdded: (){
-            setState(() {
-
-            });
+          onNewDeviceAdded: () {
+            setState(() {});
           },
         ),
         actions: [
@@ -112,9 +111,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
         children: [
           // Background(),
           ListView.builder(
-              itemCount: alarmRepository
-                  .getAlarmsForActiveDevice()
-                  .length,
+              itemCount: alarmRepository.getAlarmsForActiveDevice().length,
               itemBuilder: (c, i) {
                 var currentAlarm = alarmsForActiveDevice[i];
                 // var currentAlarm = Alarm(
@@ -126,24 +123,21 @@ class _AlarmScreenState extends State<AlarmScreen> {
                     children: [
                       Text(
                         "${currentAlarm.hour}:${currentAlarm.minute}",
-                        style: Theme
-                            .of(context)
+                        style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
                       Text(
                         currentAlarm.dayOfWeek.toDayOfWeek(),
-                        style: Theme
-                            .of(context)
+                        style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
                       Text(
                         currentAlarm.codeToSend,
-                        style: Theme
-                            .of(context)
+                        style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
@@ -154,21 +148,20 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       InkWell(
                         child: Text(
                           "ویرایش",
-                          style: Theme
-                              .of(context)
+                          style: Theme.of(context)
                               .textTheme
                               .titleMedium!
                               .copyWith(color: Colors.black),
                         ),
                         onLongPress: () {
-                          alarmRepository.removeAlarmFromActiveDevice(
-                              currentAlarm);
+                          alarmRepository
+                              .removeAlarmFromActiveDevice(currentAlarm);
                         },
                         onTap: () {
                           showPicker(
                             currentAlarm,
                             context,
-                                (alarm) {
+                            (alarm) {
                               alarmRepository.updateAlarmForActiveDevice(
                                   currentAlarm, alarm);
                               setState(() {});
@@ -179,8 +172,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       InkWell(
                         child: Text(
                           "حذف",
-                          style: Theme
-                              .of(context)
+                          style: Theme.of(context)
                               .textTheme
                               .titleMedium!
                               .copyWith(color: Colors.black),
@@ -239,18 +231,16 @@ class _AlarmScreenState extends State<AlarmScreen> {
         hideHeader: false,
         confirmText: accept,
         cancelText: cancel,
-        selectedTextStyle: Theme
-            .of(context)
+        selectedTextStyle: Theme.of(context)
             .textTheme
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
-        textStyle: Theme
-            .of(context)
+        textStyle: Theme.of(context)
             .textTheme
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
         onConfirm: (picker, data) {
-          var selectedDay = data[1].toString();
+          var selectedDay = (data[1] == 7 ? "-1" : data[1]).toString();
           var selectedMinute = minuteList[data[2]];
           var selectedHour = hourList[data[3]];
           var selectedCode = codeList[data[5]];

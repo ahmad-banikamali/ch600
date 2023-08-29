@@ -23,22 +23,21 @@ class DefaultMessageRepository extends MessagesRepository {
       return [];
     }
 
-
     if (selectedDevice == null) {
       return [];
     }
 
-
-
     List<SmsMessage> messages = await query.querySms(
         kinds: [SmsQueryKind.Inbox, SmsQueryKind.Sent],
         address: selectedDevice!.phone);
+
     var list = messages
         .map((e) => Message(
             kind: e.kind ?? SmsMessageKind.Draft,
             content: e.body ?? "",
             time: e.date!))
         .toList();
+
     return list;
   }
 
