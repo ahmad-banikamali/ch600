@@ -5,14 +5,11 @@ import 'package:ch600/data/providers/alarm_provider.dart';
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/alarm_repository.dart';
 import 'package:ch600/data/repository/device_repository.dart';
-import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/device_drop_down.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 
 class AlarmScreen extends StatefulWidget {
   const AlarmScreen({super.key});
@@ -29,6 +26,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   late List<String> hourList;
   late List<String> dayWeekList;
   late List<String> codeList;
+  late Map<String, String> codeMap;
   late var pickerData;
   var data = "";
 
@@ -48,32 +46,35 @@ class _AlarmScreenState extends State<AlarmScreen> {
       WeekDay.friday,
       WeekDay.everyday,
     ];
-    codeList = [
-      "00",
-      "10",
-      "11",
-      "12",
-      "15",
-      "40",
-      "41",
-      "45",
-      "46",
-      "50",
-      "51",
-      "70",
-      "99",
-    ].toList();
 
-    minuteList = List.generate(60, (index) => index.addZeroToString());
-    hourList = List.generate(24, (index) => index.addZeroToString());
-    pickerData = [
-      ["زمان"],
-      dayWeekList,
-      minuteList,
-      hourList,
-      ["کد"],
-      codeList
+    codeMap = {
+      "نوع دستور": "-1",
+      deactivate: "00",
+      deactivateWithSound: "10",
+      activate: "11",
+      activateWithSound: "12",
+      semiActive: "15",
+      activateRemote: "40",
+      deactivateRemote: "41",
+      activateKeypad: "45",
+      deactivateKeypad: "46",
+      activateConnection: "50",
+      deactivateConnection: "51",
+      emergency: "70",
+      report: "99",
+    };
+
+    codeList = codeMap.values.toList();
+
+    minuteList = [
+      "دقیقه",
+      ...List.generate(60, (index) => index.addZeroToString())
     ];
+    hourList = [
+      "ساعت",
+      ...List.generate(24, (index) => index.addZeroToString())
+    ];
+    pickerData = [dayWeekList, minuteList, hourList, codeMap.keys.toList()];
   }
 
   @override
@@ -110,103 +111,131 @@ class _AlarmScreenState extends State<AlarmScreen> {
       body: Stack(
         children: [
           // Background(),
-          ListView.builder(
-              itemCount: alarmRepository.getAlarmsForActiveDevice().length,
-              itemBuilder: (c, i) {
-                var currentAlarm = alarmsForActiveDevice[i];
-                // var currentAlarm = Alarm(
-                //     hour: "22", minute: "51", dayOfWeek: "2", codeToSend: "39");
-                return Container(
+          Column(
+            children: [
+              Container(
                   margin: EdgeInsets.all(8),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "${currentAlarm.hour}:${currentAlarm.minute}",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: Colors.black),
-                      ),
-                      Text(
-                        currentAlarm.dayOfWeek.toDayOfWeek(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: Colors.black),
-                      ),
-                      Text(
-                        currentAlarm.codeToSend,
+                        "زمان",
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
                       SizedBox(
-                        width: 50,
+                        width: 20,
                       ),
-                      /*InkWell(
-                        child: Text(
-                          "ویرایش",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Colors.black),
-                        ),
-                        onLongPress: () {
-                          alarmRepository
-                              .removeAlarmFromActiveDevice(currentAlarm);
-                        },
-                        onTap: () {
-                          showPicker(
-                            currentAlarm,
-                            context,
-                            (alarm) {
-                              alarmRepository.updateAlarmForActiveDevice(
-                                  currentAlarm, alarm);
-                              setState(() {});
-                            },
-                          );
-                        },
-                      ),*/
-                      InkWell(
-                        child: Text(
-                          "حذف",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Colors.black),
-                        ),
-                        onTap: () {
-                          alarmRepository.removeAlarmFromActiveDevice(
-                              alarmsForActiveDevice[i]);
-                          setState(() {});
-                        },
+                      Text(
+                        "روز",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.black),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "کد ارسالی",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.black),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "عملیات",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.black),
                       )
 
 /*                    TextButton(
-                          onPressed: () {
-                            var alarmToUpdate = Alarm(
-                                hour: "222hour",
-                                minute: "minute",
-                                dayOfWeek: "222",
-                                codeToSend: "Dddddd");
-                            alarmRepository.updateAlarmForActiveDevice(
-                                currentAlarm, alarmToUpdate);
-                            setState(() {});
-                          },
-                          child: Text("update")),
-                      TextButton(
-                          onPressed: () {
-                            alarmRepository
-                                .removeAlarmFromActiveDevice(currentAlarm);
-                            setState(() {});
-                          },
-                          child: Text("delete")),*/
+                              onPressed: () {
+                                var alarmToUpdate = Alarm(
+                                    hour: "222hour",
+                                    minute: "minute",
+                                    dayOfWeek: "222",
+                                    codeToSend: "Dddddd");
+                                alarmRepository.updateAlarmForActiveDevice(
+                                    currentAlarm, alarmToUpdate);
+                                setState(() {});
+                              },
+                              child: Text("update")),
+                          TextButton(
+                              onPressed: () {
+                                alarmRepository
+                                    .removeAlarmFromActiveDevice(currentAlarm);
+                                setState(() {});
+                              },
+                              child: Text("delete")),*/
                     ],
-                  ),
-                );
-              }),
+                  )),
+              Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount:
+                        alarmRepository.getAlarmsForActiveDevice().length,
+                    itemBuilder: (c, i) {
+                      var currentAlarm = alarmsForActiveDevice[i];
+                      // var currentAlarm = Alarm(
+                      //     hour: "22", minute: "51", dayOfWeek: "2", codeToSend: "39");
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              "${currentAlarm.hour}:${currentAlarm.minute}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: Colors.black),
+                            ),
+                            Text(
+                              currentAlarm.dayOfWeek.toDayOfWeek(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: Colors.black),
+                            ),
+                            Text(
+                              currentAlarm.codeToSend,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: Colors.black),
+                            ),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            InkWell(
+                              child: Text(
+                                "حذف",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(color: Colors.black),
+                              ),
+                              onTap: () {
+                                alarmRepository.removeAlarmFromActiveDevice(
+                                    alarmsForActiveDevice[i]);
+                                setState(() {});
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -240,15 +269,24 @@ class _AlarmScreenState extends State<AlarmScreen> {
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
         onConfirm: (picker, data) {
-          var selectedDay = (data[1] == 7 ? "-1" : data[1]).toString();
-          var selectedMinute = minuteList[data[2]];
-          var selectedHour = hourList[data[3]];
-          var selectedCode = codeList[data[5]];
-          onAlarmSelected(Alarm(
-              hour: selectedHour,
-              minute: selectedMinute,
+          var selectedDay = (data[0] == 7 ? "-1" : data[0]).toString();
+          var selectedMinute = minuteList[data[1]];
+          var selectedHour = hourList[data[2]];
+          var selectedCode = codeMap.values.toList()[data[3]];
+
+          if (data[1] == 0 || data[2] == 0 || data[3] == 0) {
+            return;
+          }
+
+          var alarm = Alarm(
+              hour: "${int.parse(selectedHour)}",
+              minute: "${int.parse(selectedMinute)}",
               dayOfWeek: selectedDay,
-              codeToSend: selectedCode));
+              codeToSend: codeMap.entries
+                  .firstWhere((element) => element.value == selectedCode)
+                  .value);
+
+          onAlarmSelected(alarm);
         },
         selecteds: [
           0,

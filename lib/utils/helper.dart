@@ -152,6 +152,23 @@ void sendMessage(String code, Device device, callback) async {
 
 const platform = MethodChannel('ch600.com/channel');
 
+var codeMap = {
+  "نوع دستور": "-1",
+  deactivate: "00",
+  deactivateWithSound: "10",
+  activate: "11",
+  activateWithSound: "12",
+  semiActive: "15",
+  activateRemote: "40",
+  deactivateRemote: "41",
+  activateKeypad: "45",
+  deactivateKeypad: "46",
+  activateConnection: "50",
+  deactivateConnection: "51",
+  emergency: "70",
+  report: "99",
+};
+
 Future<void> setAlarm(Device device, Alarm alarm) async {
   try {
     var arguments = {
@@ -162,7 +179,11 @@ Future<void> setAlarm(Device device, Alarm alarm) async {
       'hour': alarm.hour,
       'minute': alarm.minute,
       'codeToSend': alarm.codeToSend,
-      'alarmId': alarm.key
+      'alarmId': alarm.key,
+      'codeName': codeMap.entries
+          .firstWhere((element) => element.value == alarm.codeToSend)
+          .key,
+      'deviceName': device.name
     };
     await platform.invokeMethod('setAlarm', arguments);
   } on PlatformException catch (e) {}

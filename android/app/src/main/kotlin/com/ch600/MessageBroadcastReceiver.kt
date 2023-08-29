@@ -63,6 +63,8 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         val password = call.argument<String>("password")
         val defaultSimCard = call.argument<String>("defaultSimCard")
         val codeToSend = call.argument<String>("codeToSend")
+        val codeName = call.argument<String>("codeName")
+        val deviceName = call.argument<String>("deviceName")
 
 
         val alarmDaySaturdayFirst = call.argument<String>("dayOfWeek")?.toIntOrNull() ?: 0
@@ -81,6 +83,8 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             putExtra("codeToSend", codeToSend)
             putExtra("isEveryDay", alarmDaySaturdayFirst == -1)
             putExtra("alarmId", alarmId)
+            putExtra("codeName", codeName)
+            putExtra("deviceName", deviceName)
         }
 
 
@@ -163,6 +167,8 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val alarmId = intent.getIntExtra("alarmId", 0)
         val isEveryDay = intent.getBooleanExtra("isEveryDay", false)
+        val codeName = intent.getStringExtra("codeName")?:""
+        val deviceName = intent.getStringExtra("deviceName")?:""
 
         pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -171,7 +177,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_MUTABLE
         )
 
-        showNotification(context)
+        showNotification(context,codeName,deviceName)
         sendMessage(intent, context)
 
         val oneDayMilliSeconds = 24 * 60 * 60 * 1000
@@ -208,15 +214,12 @@ fun sendMessage(intent: Intent, context: Context, text: String = "") {
     smsManager.sendTextMessage(phone, null, "$text--$password#$codeToSend ----  $a", null, null)
 }
 
-fun showNotification(context: Context) {
+fun showNotification(context: Context,codeName:String,deviceName:String) {
     NotificationManagerCompat.from(context).createNotificationChannel(mChannel)
     val notification: Notification = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.drawable.app_icon)
-        .setContentTitle("sender")
+        .setSmallIcon(R.mipmap.launcher_icon)
         .setContentText(
-            "body" + SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(
-                Date()
-            )
+            " دستور \"$codeName\" به دستگاه \"$deviceName\" ارسال شد "
         )
         .build()
     if (ActivityCompat.checkSelfPermission(
