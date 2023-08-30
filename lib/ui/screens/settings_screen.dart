@@ -48,7 +48,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
         body: SingleChildScrollView(
-          physics: ScrollPhysics(),
+          physics: const ScrollPhysics(),
           child: Column(
             children: [
               CheckboxListTile(
@@ -86,11 +86,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 width: double.infinity,
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(16),
-                margin: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                     color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                    borderRadius: const BorderRadius.all(Radius.circular(8))),
                 child: InkWell(
                   onTap: () {
                     showModalBottomSheet(
@@ -117,7 +117,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 height: 1,
                 width: double.infinity,
                 color: Colors.black45,
-                margin: EdgeInsets.all(24),
+                margin: const EdgeInsets.all(24),
               ),
               Text(
                 devices,
@@ -127,7 +127,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     .copyWith(color: Colors.black, fontSize: 15),
               ),
               ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (c, i) {
                   return InkWell(
@@ -159,8 +159,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Colors.grey.shade300,borderRadius: BorderRadius.all(Radius.circular(8))),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(color: Colors.grey.shade300,borderRadius: const BorderRadius.all(Radius.circular(8))),
 
                 child: TextButton(
                     onPressed: () {

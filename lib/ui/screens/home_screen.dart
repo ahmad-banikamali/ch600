@@ -54,9 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           action: () {
             handleSendMessage("11", activeDevice, clickData[0], (isClicked) {
               clickData[0] = isClicked;
-              setState(() {
-
-              });
+              setState(() {});
             });
           },
           iconName: "lock"),
@@ -66,9 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           action: () {
             handleSendMessage("00", activeDevice, clickData[1], (isClicked) {
               clickData[1] = isClicked;
-              setState(() {
-
-              });
+              setState(() {});
             });
           },
           iconName: "unlock"),
@@ -78,7 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           action: () async {
             await pushScreen(const SettingsScreen());
             setState(() {
-              // data = data+Random().toString();
+              data = data;
             });
           },
           iconName: "setting"),

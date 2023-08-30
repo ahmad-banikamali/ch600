@@ -21,6 +21,9 @@ class HiveDeviceRepository extends DeviceRepository {
   @override
   void addDevice(Device device) {
     _deviceBox.add(device);
+    if(_deviceBox.length==1) {
+      activateDeviceWithKey(device.key);
+    }
   }
 
   @override

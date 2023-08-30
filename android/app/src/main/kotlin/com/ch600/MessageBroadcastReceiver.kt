@@ -210,8 +210,8 @@ fun sendMessage(intent: Intent, context: Context, text: String = "") {
     } else {
         SmsManager.getSmsManagerForSubscriptionId((defaultSimCard ?: "1").toInt())
     }
-    var a = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
-    smsManager.sendTextMessage(phone, null, "$text--$password#$codeToSend ----  $a", null, null)
+
+    smsManager.sendTextMessage(phone, null, "$codeToSend#$password", null, null)
 }
 
 fun showNotification(context: Context,codeName:String,deviceName:String) {

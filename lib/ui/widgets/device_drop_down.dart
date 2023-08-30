@@ -34,18 +34,13 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
     allDevices = deviceRepository.getAllDevices();
     var key2 = deviceRepository.getActiveDevice()?.key;
     if (deviceRepository.getAllDevices().isEmpty) {
-      return TextButton(
-            child: Text(
-              "افزودن دستگاه جدید${widget.data}",
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontSize: 15),
-            ),
-            onPressed: () {
-              openAddNewDeviceBottomSheet(context);
-            },
-          );
+      return Text(
+        "دستگاهی موجود نیست${widget.data}",
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium!
+            .copyWith(fontSize: 15),
+      );
     } else {
       return DropdownButton(
             value: key2,
@@ -75,23 +70,23 @@ class _DeviceDropDownState extends ConsumerState<DeviceDropDown> {
   }
 
 
-  void openAddNewDeviceBottomSheet(BuildContext context,) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: AddNewDevice(
-              onSaveClick: (newDeviceEntry) {
-                deviceRepository.addDevice(newDeviceEntry.value);
-                deviceRepository.activateLatestDevice();
-                setState(() {});
-                popScreen();
-                widget.onNewDeviceAdded?.call();
-              }
-            ),
-          );
-        });
-  }
+  // void openAddNewDeviceBottomSheet(BuildContext context,) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       isScrollControlled: true,
+  //       builder: (context) {
+  //         return Padding(
+  //           padding: MediaQuery.of(context).viewInsets,
+  //           child: AddNewDevice(
+  //             onSaveClick: (newDeviceEntry) {
+  //               deviceRepository.addDevice(newDeviceEntry.value);
+  //               deviceRepository.activateLatestDevice();
+  //               setState(() {});
+  //               popScreen();
+  //               widget.onNewDeviceAdded?.call();
+  //             }
+  //           ),
+  //         );
+  //       });
+  // }
 }

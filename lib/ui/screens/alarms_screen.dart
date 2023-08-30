@@ -10,6 +10,7 @@ import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AlarmScreen extends StatefulWidget {
   const AlarmScreen({super.key});
@@ -26,7 +27,6 @@ class _AlarmScreenState extends State<AlarmScreen> {
   late List<String> hourList;
   late List<String> dayWeekList;
   late List<String> codeList;
-  late Map<String, String> codeMap;
   late var pickerData;
   var data = "";
 
@@ -47,23 +47,6 @@ class _AlarmScreenState extends State<AlarmScreen> {
       WeekDay.everyday,
     ];
 
-    codeMap = {
-      "نوع دستور": "-1",
-      deactivate: "00",
-      deactivateWithSound: "10",
-      activate: "11",
-      activateWithSound: "12",
-      semiActive: "15",
-      activateRemote: "40",
-      deactivateRemote: "41",
-      activateKeypad: "45",
-      deactivateKeypad: "46",
-      activateConnection: "50",
-      deactivateConnection: "51",
-      emergency: "70",
-      report: "99",
-    };
-
     codeList = codeMap.values.toList();
 
     minuteList = [
@@ -83,6 +66,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.small(
           onPressed: () {
+            if (deviceRepository.getActiveDevice()?.value == null) {
+              showSnackBar("لطفا ابتدا یک دستگاه تعریف کنید");
+              return;
+            }
             showPicker(null, context, (alarm) {
               alarmRepository.addAlarmForActiveDevice(alarm);
               setState(() {});
@@ -114,20 +101,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
           Column(
             children: [
               Container(
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "زمان",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: Colors.black),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
                       Text(
                         "روز",
                         style: Theme.of(context)
@@ -135,18 +112,19 @@ class _AlarmScreenState extends State<AlarmScreen> {
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
                       Text(
-                        "کد ارسالی",
+                        "زمان",
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium!
                             .copyWith(color: Colors.black),
                       ),
-                      SizedBox(
-                        width: 20,
+                      Text(
+                        "دستور",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(color: Colors.black),
                       ),
                       Text(
                         "عملیات",
@@ -187,17 +165,10 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       // var currentAlarm = Alarm(
                       //     hour: "22", minute: "51", dayOfWeek: "2", codeToSend: "39");
                       return Container(
-                        margin: EdgeInsets.all(8),
+                        margin: const EdgeInsets.all(8),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "${currentAlarm.hour}:${currentAlarm.minute}",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.black),
-                            ),
                             Text(
                               currentAlarm.dayOfWeek.toDayOfWeek(),
                               style: Theme.of(context)
@@ -206,22 +177,38 @@ class _AlarmScreenState extends State<AlarmScreen> {
                                   .copyWith(color: Colors.black),
                             ),
                             Text(
-                              currentAlarm.codeToSend,
+                              "${currentAlarm.hour.addZeroToString()}:${currentAlarm.minute.addZeroToString()}",
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium!
                                   .copyWith(color: Colors.black),
                             ),
-                            SizedBox(
-                              width: 50,
+                            Text(
+                              codeMap.entries
+                                  .toList()
+                                  .firstWhere((element) =>
+                                      element.value == currentAlarm.codeToSend)
+                                  .key,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: Colors.black),
                             ),
                             InkWell(
-                              child: Text(
-                                "حذف",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(color: Colors.black),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 4),
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    color: Colors.red.withOpacity(0.2)),
+                                child: Text(
+                                  "حذف",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(color: Colors.red),
+                                ),
                               ),
                               onTap: () {
                                 alarmRepository.removeAlarmFromActiveDevice(
@@ -257,6 +244,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
     }
 
     Picker(
+        columnFlex: [1, 1, 1, 2],
         hideHeader: false,
         confirmText: accept,
         cancelText: cancel,
@@ -268,7 +256,12 @@ class _AlarmScreenState extends State<AlarmScreen> {
             .textTheme
             .titleMedium!
             .copyWith(color: Colors.black, fontSize: 15),
-        onConfirm: (picker, data) {
+        onConfirm: (picker, data) async {
+
+          if(!await Permission.notification.request().isGranted) {
+            return;
+          }
+
           var selectedDay = (data[0] == 7 ? "-1" : data[0]).toString();
           var selectedMinute = minuteList[data[1]];
           var selectedHour = hourList[data[2]];

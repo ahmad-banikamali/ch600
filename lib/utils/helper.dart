@@ -112,6 +112,14 @@ extension ExtendedInt on int {
 }
 
 extension ExtendedString on String {
+
+  String addZeroToString() {
+    if (int.parse(this) < 10) {
+      return "0$this";
+    }
+    return this;
+  }
+
   String toDayOfWeek() {
     var dayOfWeek = "";
     switch (this) {
@@ -154,19 +162,24 @@ const platform = MethodChannel('ch600.com/channel');
 
 var codeMap = {
   "نوع دستور": "-1",
-  deactivate: "00",
-  deactivateWithSound: "10",
-  activate: "11",
-  activateWithSound: "12",
-  semiActive: "15",
-  activateRemote: "40",
-  deactivateRemote: "41",
-  activateKeypad: "45",
-  deactivateKeypad: "46",
-  activateConnection: "50",
-  deactivateConnection: "51",
-  emergency: "70",
-  report: "99",
+  "دستگاه فعال": "11",
+  "دستگاه غیر فعال": "00",
+  "فعال با صدا": "12",
+  "تغییر فعال با صدا": "10",
+  "نیمه فعال": "15",
+  "رله 1 فعال": "20",
+  "رله 1 غیر فعال": "21",
+  "رله 2 فعال": "25",
+  "رله 2 غیر فعال": "26",
+  "رله 3 فعال": "30",
+  "رله 3 غیر فعال": "31",
+  "رله 4 فعال": "35",
+  "رله 4 غیر فعال": "36",
+  "همه رله ها فعال": "37",
+  "همه رله ها غیر فعال": "38",
+  "گزارش دستگاه": "99",
+  "گزارش رله ها": "98",
+  "آژیر اضظراری": "70",
 };
 
 Future<void> setAlarm(Device device, Alarm alarm) async {

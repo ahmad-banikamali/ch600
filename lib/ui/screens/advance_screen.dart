@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/device_repository.dart';
 import 'package:ch600/ui/screens/alarms_screen.dart';
@@ -8,6 +10,7 @@ import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/device_drop_down.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -71,14 +74,15 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
           title: deactivateConnection,
           codeToSend: "51",
           iconName: "user_deactive"),
-      AdvanceScreenButton(
-          title: timers,
-          action: () async {
-            await pushScreen(const AlarmScreen());
-            data = data;
-            setState(() {});
-          },
-          iconName: "timer"),
+      if (Platform.isAndroid)
+        AdvanceScreenButton(
+            title: timers,
+            action: () async {
+              await pushScreen(const AlarmScreen());
+              data = data;
+              setState(() {});
+            },
+            iconName: "timer"),
       AdvanceScreenButton(title: emergency, codeToSend: "70", iconName: "bell"),
       AdvanceScreenButton(
           title: messagesInbox,

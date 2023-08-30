@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simnumber/sim_number.dart';
 import 'package:simnumber/siminfo.dart';
+import 'dart:io';
 
 class AddNewDevice extends StatefulWidget {
   final void Function(MapEntry<dynamic, Device>) onSaveClick;
@@ -55,11 +56,10 @@ class _AddNewDeviceState extends State<AddNewDevice> {
   }
 
   Future<int?> getSimCardCount() async {
-    if(await Permission.phone.request().isGranted) {
+    if (Platform.isAndroid && await Permission.phone.request().isGranted) {
       SimInfo simInfo = await SimNumber.getSimData();
       return simInfo.cards.length;
-    }
-    else {
+    } else {
       return 1;
     }
   }
@@ -155,7 +155,7 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                   },
                 ),
               ),
-              if (s.data !=null && s.data! > 1)
+              if (s.data != null && s.data! > 1)
                 Container(
                   padding: const EdgeInsets.all(12),
                   child: InkWell(
@@ -203,10 +203,10 @@ class _AddNewDeviceState extends State<AddNewDevice> {
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Colors.grey.shade300,borderRadius: BorderRadius.all(Radius.circular(8))),
-
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
                 child: TextButton(
-
                   onPressed: () async {
                     if (_formKey.currentState?.validate() == false) return;
                     _formKey.currentState?.save();
@@ -218,11 +218,10 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                             defaultSimCard: defaultSimCard,
                             password: password)));
                   },
-
-                  child: Text(accept,  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onBackground, fontSize: 15)),
+                  child: Text(accept,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 15)),
                 ),
               ),
             ],
