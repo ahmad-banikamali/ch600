@@ -1,4 +1,5 @@
-import 'dart:ffi';
+
+import 'dart:io';
 
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/data/providers/device_provider.dart';
@@ -14,10 +15,7 @@ import 'package:ch600/ui/widgets/logo.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:io';
-
 import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -35,7 +33,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late bool showLockScreen;
   late Device? activeDevice;
   DeviceRepository deviceRepository = HiveDeviceRepository();
-  late List<bool> clickData;
 
   @override
   void initState() {
@@ -43,7 +40,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnHomeScreen, defaultValue: false);
 
-    clickData = [for (var i = 0; i < 2; ++i) false];
+
   }
 
   void initButtonData() {
@@ -52,8 +49,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           backgroundColor: Colors.blue,
           title: activate,
           action: () {
-            handleSendMessage("11", activeDevice, clickData[0], (isClicked) {
-              clickData[0] = isClicked;
+            handleSendMessage("11", activeDevice, clickData, (isClicked) {
+              clickData= isClicked;
               setState(() {});
             });
           },
@@ -62,8 +59,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           backgroundColor: Colors.blue,
           title: deactivate,
           action: () {
-            handleSendMessage("00", activeDevice, clickData[1], (isClicked) {
-              clickData[1] = isClicked;
+            handleSendMessage("00", activeDevice, clickData, (isClicked) {
+              clickData = isClicked;
               setState(() {});
             });
           },
@@ -153,7 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: button.backgroundColor,
+                                      color: Colors.grey,
                                     ),
                                     clipBehavior: Clip.antiAlias,
                                     child: MaterialButton(

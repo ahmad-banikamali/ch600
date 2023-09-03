@@ -44,11 +44,12 @@ extension ExtendedState on State {
   void handleSendMessage(String codeToSend, Device? device, isClicked,
       void Function(bool) onClick) {
     if (device == null) {
-      showSnackBar('لطفا ابتدا یک دستگاه تعریف کنید');
+      showSnackBar('ابتدا یک دستگاه تعریف کنید');
       return;
     }
     if (isClicked) {
-      showSnackBar("از دستور قبلی حد اقل باید 10 ثانیه گذشته باشد");
+
+      showSnackBar("از دستور قبلی حداقل باید 10 ثانیه گذشته باشد");
       Future.delayed(const Duration(milliseconds: 10000), () {
         onClick(false);
       });
@@ -113,6 +114,17 @@ extension ExtendedInt on int {
 
 extension ExtendedString on String {
 
+  String replaceFarsiNumber() {
+    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const farsi = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    var x="";
+    for (int i = 0; i < english.length; i++) {
+      x = replaceAll(farsi[i], english[i]);
+    }
+
+    return x;
+  }
+
   String addZeroToString() {
     if (int.parse(this) < 10) {
       return "0$this";
@@ -149,7 +161,7 @@ extension ExtendedString on String {
 void sendMessage(String code, Device device, callback) async {
   if (await Permission.sms.request().isGranted) {
     await FlutterSmsDual().sendSMS(
-      message: "$code#${device.password}",
+      message: "${device.password}#$code",
       recipients: [device.phone],
       sendDirect: true,
       sim: device.defaultSimCard,
@@ -159,6 +171,7 @@ void sendMessage(String code, Device device, callback) async {
 }
 
 const platform = MethodChannel('ch600.com/channel');
+bool clickData = false;
 
 var codeMap = {
   "نوع دستور": "-1",

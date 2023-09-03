@@ -42,10 +42,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           title: Text(
             setting,
             style: Theme.of(context).textTheme.titleMedium!,
           ),
+
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                "assets/images/toolbar_logo.png",
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           physics: const ScrollPhysics(),
@@ -67,22 +79,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       .copyWith(color: Colors.black, fontSize: 15),
                 ),
               ),
-              CheckboxListTile(
-                value: showLockOnAdvanceScreen,
-                onChanged: (isEnabled) {
-                  showLockOnAdvanceScreen = isEnabled ?? false;
-                  box.put(DbConstants.keyShowLockOnAdvanceScreen,
-                      showLockOnAdvanceScreen);
-                  setState(() {});
-                },
-                title: Text(
-                  "درخواست رمز هنگام ورود به قسمت پیشرفته",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Colors.black, fontSize: 15),
-                ),
-              ),
+              // CheckboxListTile(
+              //   value: showLockOnAdvanceScreen,
+              //   onChanged: (isEnabled) {
+              //     showLockOnAdvanceScreen = isEnabled ?? false;
+              //     box.put(DbConstants.keyShowLockOnAdvanceScreen,
+              //         showLockOnAdvanceScreen);
+              //     setState(() {});
+              //   },
+              //   title: Text(
+              //     "درخواست رمز هنگام ورود به قسمت پیشرفته",
+              //     style: Theme.of(context)
+              //         .textTheme
+              //         .titleMedium!
+              //         .copyWith(color: Colors.black, fontSize: 15),
+              //   ),
+              // ),
               Container(
                 width: double.infinity,
                 alignment: Alignment.center,

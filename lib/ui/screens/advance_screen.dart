@@ -29,7 +29,6 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
   final DeviceRepository deviceRepository = HiveDeviceRepository();
 
   late bool showLockScreen;
-  late List<bool> clickData;
 
   @override
   void initState() {
@@ -37,7 +36,7 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnAdvanceScreen, defaultValue: false);
 
-    clickData = [for (var i = 0; i < 11; ++i) false];
+
 
     super.initState();
   }
@@ -53,7 +52,7 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
           codeToSend: "10",
           iconName: "lockpage_unlock"),
       AdvanceScreenButton(
-          title: report, codeToSend: "99", iconName: "scenario"),
+          title: "گزارش دستگاه", codeToSend: "99", iconName: "scenario"),
       AdvanceScreenButton(
           title: semiActive, codeToSend: "15", iconName: "lockpage_lock"),
       AdvanceScreenButton(
@@ -91,6 +90,10 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
             setState(() {});
           },
           iconName: "inbox"),
+      AdvanceScreenButton(
+          title: "گزارش رله ها",
+          codeToSend: "98",
+          iconName: "scenario"),
     ];
   }
 
@@ -105,6 +108,17 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
         children: [
           Scaffold(
             appBar: AppBar(
+              iconTheme: IconThemeData(
+                color: Colors.white, //change your color here
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(
+                    "assets/images/toolbar_logo.png",
+                  ),
+                )
+              ],
               title: DeviceDropDown(
                 data: data,
                 onNewDeviceAdded: () {
@@ -130,8 +144,8 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
                         handleSendMessage(
                             button.codeToSend!,
                             deviceRepository.getActiveDevice()?.value,
-                            clickData[i], (isClicked) {
-                          clickData[i] = isClicked;
+                            clickData, (isClicked) {
+                          clickData = isClicked;
                           setState(() {});
                         });
                       }

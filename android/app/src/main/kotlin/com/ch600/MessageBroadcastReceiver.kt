@@ -23,13 +23,13 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val notifyID: Int = 1
-private val importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
-private val channelId = "my_channel_01"
+private const val notifyID: Int = 1
+private const val importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
+private const val channelId = "ch600_channel_01"
 
 private val mChannel = NotificationChannelCompat.Builder(channelId, importance).apply {
-    setName("channel name") // Must set! Don't remove
-    setDescription("channel description")
+    setName("ch600") // Must set! Don't remove
+    setDescription("ch600 message report")
 }.build()
 
 class MessageBroadcastReceiver : BroadcastReceiver() {
@@ -160,15 +160,13 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        //-------------
-
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
         val alarmId = intent.getIntExtra("alarmId", 0)
         val isEveryDay = intent.getBooleanExtra("isEveryDay", false)
-        val codeName = intent.getStringExtra("codeName")?:""
-        val deviceName = intent.getStringExtra("deviceName")?:""
+        val codeName = intent.getStringExtra("codeName") ?: ""
+        val deviceName = intent.getStringExtra("deviceName") ?: ""
 
         pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -179,22 +177,23 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         showNotification(context,codeName,deviceName)
         sendMessage(intent, context)
+        resetAlarm(isEveryDay, alarmManager)
 
+    }
+
+    private fun resetAlarm(isEveryDay: Boolean, alarmManager: AlarmManager) {
         val oneDayMilliSeconds = 24 * 60 * 60 * 1000
 
         try {
+            val interval = if (isEveryDay) oneDayMilliSeconds else 7 * oneDayMilliSeconds
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
-                Calendar.getInstance().timeInMillis + if (isEveryDay) oneDayMilliSeconds else 7 * oneDayMilliSeconds,
+                Calendar.getInstance().timeInMillis + interval,
                 pendingIntent
             )
         } catch (e: Exception) {
             println(e)
         }
-
-
-        //--------------
-
     }
 
 }
@@ -211,10 +210,10 @@ fun sendMessage(intent: Intent, context: Context, text: String = "") {
         SmsManager.getSmsManagerForSubscriptionId((defaultSimCard ?: "1").toInt())
     }
 
-    smsManager.sendTextMessage(phone, null, "$codeToSend#$password", null, null)
+    smsManager.sendTextMessage(phone, null, "$password#$codeToSend", null, null)
 }
 
-fun showNotification(context: Context,codeName:String,deviceName:String) {
+fun showNotification(context: Context, codeName: String, deviceName: String) {
     NotificationManagerCompat.from(context).createNotificationChannel(mChannel)
     val notification: Notification = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(R.mipmap.launcher_icon)

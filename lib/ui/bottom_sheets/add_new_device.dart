@@ -1,5 +1,6 @@
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/utils/constants.dart';
+import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simnumber/sim_number.dart';
@@ -135,6 +136,7 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                 onTap: null,
                 title: TextFormField(
                   initialValue: password,
+                  keyboardType: TextInputType.number,
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
@@ -147,11 +149,19 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                         .titleMedium!
                         .copyWith(color: Colors.black),
                   )),
-                  validator: (value) {
-                    return null;
+                  validator: (s) {
+                    if(s==null || s.isEmpty){
+                      return "رمز را وارد نمایید";
+                    }
+                    if (s.isNotEmpty && s.length!=5) {
+                      return " طول رمز باید 5 کارکتر باشد";
+                    }
+                    if(s.contains("-")||s.contains(" ")||s.contains(",") || s.contains(".")) {
+                      return "فقط کارکتر عددی وارد نمایید";
+                    }
                   },
                   onSaved: (s) {
-                    password = s!;
+                    password = s!.replaceFarsiNumber();
                   },
                 ),
               ),

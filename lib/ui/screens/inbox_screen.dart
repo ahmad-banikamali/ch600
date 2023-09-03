@@ -34,6 +34,9 @@ class _InboxScreenState extends State<InboxScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         title: DeviceDropDown(
           data: data,
           onNewDeviceAdded: () {

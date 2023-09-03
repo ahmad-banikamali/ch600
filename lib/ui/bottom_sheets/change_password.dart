@@ -35,28 +35,17 @@ class _ChangePasswordState extends State<ChangePassword> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!.copyWith(color: Colors.black),
-                validator: (s) {
-                  if (s != correctPass) {
-                    return "رمز وارد شده اشتباه است";
-                  } else {
-                    return null;
-                  }
-                },
-                controller: currentPassController,
-                decoration: const InputDecoration(labelText: 'رمز فعلی')),
-            TextFormField(
                 style: Theme.of(context)
                     .textTheme
-                    .titleMedium!.copyWith(color: Colors.black),
+                    .titleMedium!
+                    .copyWith(color: Colors.black),
                 controller: newPassController,
                 decoration: const InputDecoration(labelText: 'رمز جدید')),
             TextFormField(
                 style: Theme.of(context)
                     .textTheme
-                    .titleMedium!.copyWith(color: Colors.black),
+                    .titleMedium!
+                    .copyWith(color: Colors.black),
                 validator: (s) {
                   if (s != newPassController.value.text) {
                     return "رمزها همخوانی ندارند";
@@ -68,14 +57,18 @@ class _ChangePasswordState extends State<ChangePassword> {
             TextButton(
                 onPressed: () {
                   if (key.currentState?.validate() == true) {
-                    box.put(DbConstants.keyPassword, newPassController.value.text);
+                    box.put(
+                        DbConstants.keyPassword, newPassController.value.text);
                     popScreen();
                   }
                 },
-                child: Text("تایید",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!.copyWith(color: Colors.black),))
+                child: Text(
+                  "تایید",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Colors.black),
+                ))
           ],
         ),
       ),

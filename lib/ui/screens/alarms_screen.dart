@@ -64,19 +64,22 @@ class _AlarmScreenState extends State<AlarmScreen> {
   Widget build(BuildContext context) {
     alarmsForActiveDevice = alarmRepository.getAlarmsForActiveDevice();
     return Scaffold(
-      floatingActionButton: FloatingActionButton.small(
-          onPressed: () {
-            if (deviceRepository.getActiveDevice()?.value == null) {
-              showSnackBar("لطفا ابتدا یک دستگاه تعریف کنید");
-              return;
-            }
-            showPicker(null, context, (alarm) {
-              alarmRepository.addAlarmForActiveDevice(alarm);
-              setState(() {});
-            });
-          },
-          child: const Icon(Icons.add)),
+      // floatingActionButton: FloatingActionButton.small(
+      //     onPressed: () {
+      //       if (deviceRepository.getActiveDevice()?.value == null) {
+      //         showSnackBar("ابتدا یک دستگاه تعریف کنید");
+      //         return;
+      //       }
+      //       showPicker(null, context, (alarm) {
+      //         alarmRepository.addAlarmForActiveDevice(alarm);
+      //         setState(() {});
+      //       });
+      //     },
+      //     child: const Icon(Icons.add)),
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         title: DeviceDropDown(
           data: data,
           onDeviceSelected: () {
@@ -197,7 +200,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                             InkWell(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 4),
+                                    horizontal: 16, vertical: 0),
                                 decoration: BoxDecoration(
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(8)),
@@ -221,6 +224,30 @@ class _AlarmScreenState extends State<AlarmScreen> {
                       );
                     }),
               ),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(color: Colors.grey.shade300,borderRadius: const BorderRadius.all(Radius.circular(8))),
+
+                child: TextButton(
+                    onPressed: () {
+                      if (deviceRepository.getActiveDevice()?.value == null) {
+                        showSnackBar("ابتدا یک دستگاه تعریف کنید");
+                        return;
+                      }
+                      showPicker(null, context, (alarm) {
+                        alarmRepository.addAlarmForActiveDevice(alarm);
+                        setState(() {});
+                      });
+                    },
+                    child: Text(
+                      "افزودن تایمر",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.onBackground, fontSize: 15),
+                    )),
+              )
             ],
           ),
         ],
