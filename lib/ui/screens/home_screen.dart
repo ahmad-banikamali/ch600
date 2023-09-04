@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:ch600/data/models/device.dart';
@@ -39,8 +38,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     showLockScreen = Hive.box(DbConstants.etcDB)
         .get(DbConstants.keyShowLockOnHomeScreen, defaultValue: false);
-
-
   }
 
   void initButtonData() {
@@ -50,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           title: activate,
           action: () {
             handleSendMessage("11", activeDevice, clickData, (isClicked) {
-              clickData= isClicked;
+              clickData = isClicked;
               setState(() {});
             });
           },
@@ -93,103 +90,121 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       MainScreenButton(
           backgroundColor: Colors.blue,
           title: exitFromApp,
-          action: () {
-            exit(0);
-          },
+          action: exitApp,
           iconName: "exit"),
     ];
   }
 
-  @override
-  Widget build(BuildContext context) {
-    initButtonData();
-    activeDevice = deviceRepository.getActiveDevice()?.value;
+  DateTime backPressTime = DateTime.now();
 
-    return Stack(
-      children: [
-        Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: DeviceDropDown(
-                data: data,
-                onNewDeviceAdded: () {
-                  setState(() {});
-                },
-                onDeviceSelected: () {
-                  setState(() {});
-                },
+  exitApp() {
+    DateTime now = DateTime.now();
+    if (now.difference(backPressTime) < Duration(seconds: 2)) {
+      exit(0);
+    }
+    else {
+      backPressTime = DateTime.now();
+      showSnackBar("برای خروج دو مرتبه کلیک کنید.");
+    }
+  }
+
+
+    @override
+    Widget build(BuildContext context) {
+      initButtonData();
+      activeDevice = deviceRepository
+          .getActiveDevice()
+          ?.value;
+
+      return Stack(
+        children: [
+          Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: DeviceDropDown(
+                  data: data,
+                  onNewDeviceAdded: () {
+                    setState(() {});
+                  },
+                  onDeviceSelected: () {
+                    setState(() {});
+                  },
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      "assets/images/toolbar_logo.png",
+                    ),
+                  )
+                ],
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    "assets/images/toolbar_logo.png",
-                  ),
-                )
-              ],
-            ),
-            body: Stack(
-              children: [
-                const Background(),
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        const Logo(),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        GridView.count(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            crossAxisCount: 2,
-                            children: buttonData.map((button) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.grey,
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: MaterialButton(
-                                      padding: const EdgeInsets.all(5),
-                                      onPressed: () {},
-                                      child: IconButton(
-                                        onPressed: button.action,
-                                        icon: ClipOval(
-                                            child: Image.asset(
-                                          "$baseIconDir${button.iconName}$iconExtension",
-                                        )),
+              body: Stack(
+                children: [
+                  const Background(),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          const Logo(),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          GridView.count(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              children: buttonData.map((button) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey,
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: MaterialButton(
+                                        padding: const EdgeInsets.all(5),
+                                        onPressed: () {},
+                                        child: IconButton(
+                                          onPressed: button.action,
+                                          icon: ClipOval(
+                                              child: Image.asset(
+                                                "$baseIconDir${button
+                                                    .iconName}$iconExtension",
+                                              )),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    button.title,
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  )
-                                ],
-                              );
-                            }).toList()),
-                      ],
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      button.title,
+                                      style:
+                                      Theme
+                                          .of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    )
+                                  ],
+                                );
+                              }).toList()),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )),
-        if (showLockScreen)
-          LockScreen(
-            onSuccess: () {
-              showLockScreen = false;
-              setState(() {});
-            },
-          )
-      ],
-    );
+                ],
+              )),
+          if (showLockScreen)
+            LockScreen(
+              onSuccess: () {
+                showLockScreen = false;
+                setState(() {});
+              },
+            )
+        ],
+      );
+    }
   }
-}

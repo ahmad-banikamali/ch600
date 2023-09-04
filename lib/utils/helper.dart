@@ -1,6 +1,5 @@
 import 'dart:async';
 
-// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
 import 'package:ch600/utils/constants.dart';
@@ -27,6 +26,10 @@ bool isPhoneNumberValid(String value) {
   return true;
 }
 
+var remainedTime = 10;
+var isTimerActive = false;
+late Timer timer;
+
 extension ExtendedState on State {
   Future pushScreen(Widget route) {
     return Navigator.of(context).push(MaterialPageRoute(builder: (c) => route));
@@ -48,8 +51,8 @@ extension ExtendedState on State {
       return;
     }
     if (isClicked) {
-
-      showSnackBar("از دستور قبلی حداقل باید 10 ثانیه گذشته باشد");
+      calculateRemainedTime();
+      showSnackBar("$remainedTime ثانیه دیگر دستور را ارسال نمائید");
       Future.delayed(const Duration(milliseconds: 10000), () {
         onClick(false);
       });
@@ -103,6 +106,20 @@ extension ExtendedState on State {
   }
 }
 
+void calculateRemainedTime() {
+  if (!isTimerActive) {
+    isTimerActive = true;
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      remainedTime--;
+      if (remainedTime == 0) {
+        timer.cancel();
+        isTimerActive = false;
+        remainedTime = 10;
+      }
+    });
+  }
+}
+
 extension ExtendedInt on int {
   String addZeroToString() {
     if (this < 10) {
@@ -113,11 +130,10 @@ extension ExtendedInt on int {
 }
 
 extension ExtendedString on String {
-
   String replaceFarsiNumber() {
     const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const farsi = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-    var x="";
+    var x = "";
     for (int i = 0; i < english.length; i++) {
       x = replaceAll(farsi[i], english[i]);
     }
