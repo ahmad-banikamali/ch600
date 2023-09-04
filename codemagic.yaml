@@ -1,0 +1,20 @@
+workflows:
+  ios-native-quick-start:
+    name: ch600
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      vars:
+        BUNDLE_ID: "com.ch600"
+        XCODE_WORKSPACE: "CodemagicSample.xcworkspace"
+        XCODE_SCHEME: "CodemagicSample"
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set up provisioning profiles settings on Xcode project
+        script: xcode-project use-profiles
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
