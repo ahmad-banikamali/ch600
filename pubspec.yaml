@@ -43,10 +43,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.0
-  webview_flutter: ^4.2.2
-  flutter_time_picker_spinner: ^2.0.0
   flutter_picker: ^2.1.0
-  sms_advanced: ^1.1.0
   permission_handler: ^10.4.3
   pin_code_fields: ^8.0.1
   simnumber: ^0.0.12
@@ -88,6 +85,7 @@ flutter:
     - assets/images/
     - assets/images/icons_advance_screen/
     - assets/images/icons_main_screen/
+    - assets/images/icons_relay_screen/
 
 
 

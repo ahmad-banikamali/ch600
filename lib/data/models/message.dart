@@ -1,8 +1,7 @@
-import 'package:sms_advanced/sms_advanced.dart';
 
 class Message {
 
-  SmsMessageKind kind;
+  MessageKind kind;
   String content;
   DateTime time;
 
@@ -15,4 +14,7 @@ class Message {
 
 }
 
+enum MessageKind{
+  send,receive
+}
 

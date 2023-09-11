@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:ch600/data/models/alarm.dart';
 import 'package:ch600/data/models/device.dart';
+import 'package:ch600/data/models/message.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,11 +53,7 @@ extension ExtendedState on State {
       return;
     }
     if (isClicked) {
-      calculateRemainedTime();
       showSnackBar("$remainedTime ثانیه دیگر دستور را ارسال نمائید");
-      Future.delayed(const Duration(milliseconds: 10000), () {
-        onClick(false);
-      });
       return;
     }
     showDialog(
@@ -84,6 +82,11 @@ extension ExtendedState on State {
                   sendMessage(codeToSend, device, () {
                     showSnackBar('پیام با موفقیت ارسال شد');
                   });
+
+                  calculateRemainedTime();
+                  Future.delayed(const Duration(milliseconds: 10000), () {
+                    onClick(false);
+                  });
                   popScreen();
                   onClick(true);
                 },
@@ -104,19 +107,19 @@ extension ExtendedState on State {
         content: Text(text, style: Theme.of(context).textTheme.titleMedium!));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-}
 
-void calculateRemainedTime() {
-  if (!isTimerActive) {
-    isTimerActive = true;
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      remainedTime--;
-      if (remainedTime == 0) {
-        timer.cancel();
-        isTimerActive = false;
-        remainedTime = 10;
-      }
-    });
+  calculateRemainedTime() {
+    if (!isTimerActive) {
+      isTimerActive = true;
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+        remainedTime--;
+        if (remainedTime == 0) {
+          timer.cancel();
+          isTimerActive = false;
+          remainedTime = 10;
+        }
+      });
+    }
   }
 }
 
@@ -146,6 +149,30 @@ extension ExtendedString on String {
       return "0$this";
     }
     return this;
+  }
+
+  String toPersianWeekday(){
+    var dayOfWeek  = "";
+
+    switch (toLowerCase()) {
+      case "sat":
+        dayOfWeek = WeekDay.saturday;
+      case "sun":
+        dayOfWeek = WeekDay.sunday;
+      case "mon":
+        dayOfWeek = WeekDay.monday;
+      case "tue":
+        dayOfWeek = WeekDay.tuesday;
+      case "wed":
+        dayOfWeek = WeekDay.wednesday;
+      case "thu":
+        dayOfWeek = WeekDay.thursday;
+      case "fri":
+        dayOfWeek = WeekDay.friday;
+      default:
+        dayOfWeek = WeekDay.error;
+    }
+    return dayOfWeek;
   }
 
   String toDayOfWeek() {
@@ -231,11 +258,36 @@ Future<void> setAlarm(Device device, Alarm alarm) async {
   } on PlatformException catch (e) {}
 }
 
-Future<void> removeAlarm(int alarmId) async {
+Future<void> removeAlarm(Alarm alarm) async {
   try {
     var arguments = {
-      'alarmId': alarmId,
+      'codeToSend': alarm.codeToSend,
+      'dayOfWeek': alarm.dayOfWeek,
+      'hour': alarm.hour,
+      'minute': alarm.minute,
     };
     await platform.invokeMethod('removeAlarm', arguments);
   } on PlatformException catch (e) {}
+}
+
+Future<List<Message>> getSms(String phone) async {
+  try {
+    var arguments = {
+      'phone': phone,
+    };
+    List s = await platform.invokeMethod('getSms', arguments);
+
+    return s.map((e) {
+      var type = e['type'] == "RECEIVE" ? MessageKind.receive : MessageKind.send;
+
+      return Message(
+          kind: type,
+          content: e['content']??"",
+          time: DateTime.fromMillisecondsSinceEpoch(int.tryParse(e['dateTime']??"")??0));
+    }).toList();
+
+  } catch (e) {
+    print(e);
+    return [];
+  }
 }

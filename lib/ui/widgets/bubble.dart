@@ -18,6 +18,7 @@ class BubbleNormal extends StatelessWidget {
   bool isSender = false;
   final Color color;
   final String text;
+  String messageOwner;
   final bool tail;
   final bool sent;
   final bool delivered;
@@ -28,6 +29,7 @@ class BubbleNormal extends StatelessWidget {
   BubbleNormal({
     Key? key,
     required this.text,
+    this.messageOwner = "",
     this.constraints,
     this.bubbleRadius = BUBBLE_RADIUS,
     bool isReceiver = true,
@@ -51,7 +53,7 @@ class BubbleNormal extends StatelessWidget {
     Icon? stateIcon;
     if (sent) {
       stateTick = true;
-      stateIcon = Icon(
+      stateIcon = const Icon(
         Icons.done,
         size: 18,
         color: Color(0xFF97AD8E),
@@ -59,7 +61,7 @@ class BubbleNormal extends StatelessWidget {
     }
     if (delivered) {
       stateTick = true;
-      stateIcon = Icon(
+      stateIcon = const Icon(
         Icons.done_all,
         size: 18,
         color: Color(0xFF97AD8E),
@@ -67,7 +69,7 @@ class BubbleNormal extends StatelessWidget {
     }
     if (seen) {
       stateTick = true;
-      stateIcon = Icon(
+      stateIcon = const Icon(
         Icons.done_all,
         size: 18,
         color: Color(0xFF92DEDA),
@@ -78,7 +80,7 @@ class BubbleNormal extends StatelessWidget {
       textDirection: TextDirection.ltr,
       children: <Widget>[
         isSender
-            ? Expanded(
+            ? const Expanded(
                 child: SizedBox(
                   width: 5,
                 ),
@@ -112,12 +114,24 @@ class BubbleNormal extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: stateTick
-                        ? EdgeInsets.fromLTRB(12, 6, 28, 6)
-                        : EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Text(
-                      text,
-                      style: textStyle,
-                      textAlign: TextAlign.left,
+                        ? const EdgeInsets.fromLTRB(12, 6, 28, 6)
+                        : const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: isSender
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          text,
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        Text(
+                          messageOwner,
+                          style: textStyle.copyWith(fontSize: 10),
+                        ),
+                      ],
                     ),
                   ),
                   stateIcon != null && stateTick
@@ -126,7 +140,7 @@ class BubbleNormal extends StatelessWidget {
                           right: 6,
                           child: stateIcon,
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           width: 1,
                         ),
                 ],

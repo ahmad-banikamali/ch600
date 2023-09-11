@@ -16,11 +16,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.plugin.common.MethodCall
-import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import java.util.TimeZone
 
 private const val notifyID: Int = 1
@@ -150,9 +147,14 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             c.add(Calendar.HOUR_OF_DAY, 24 * negativeAlarmDaySundayFirst)
 
         } else {
-
-            c.set(Calendar.DAY_OF_WEEK, alarmDaySundayFirst)
-
+            if (alarmDaySaturdayFirst == todaySaturdayFirst){
+                val currentHour = c.get(Calendar.HOUR_OF_DAY)
+                val currentMinute = c.get(Calendar.MINUTE)
+                if (alarmHour < currentHour || (alarmHour == currentHour && alarmMinute < currentMinute))
+                    c.add(Calendar.HOUR_OF_DAY, 24*7)
+            }
+            else
+                c.set(Calendar.DAY_OF_WEEK, alarmDaySundayFirst)
         }
         return c
     }

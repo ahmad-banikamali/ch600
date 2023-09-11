@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simnumber/sim_number.dart';
 import 'package:simnumber/siminfo.dart';
-import 'dart:io';
+
 
 class AddNewDevice extends StatefulWidget {
   final void Function(MapEntry<dynamic, Device>) onSaveClick;
@@ -57,10 +57,14 @@ class _AddNewDeviceState extends State<AddNewDevice> {
   }
 
   Future<int?> getSimCardCount() async {
-    if (Platform.isAndroid && await Permission.phone.request().isGranted) {
-      SimInfo simInfo = await SimNumber.getSimData();
-      return simInfo.cards.length;
-    } else {
+    try {
+      if (await Permission.phone.request().isGranted) {
+            SimInfo simInfo = await SimNumber.getSimData();
+            return simInfo.cards.length;
+          } else {
+            return 1;
+          }
+    } catch (e) {
       return 1;
     }
   }

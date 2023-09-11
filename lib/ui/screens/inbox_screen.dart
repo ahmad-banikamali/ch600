@@ -6,8 +6,9 @@ import 'package:ch600/data/repository/messages_repository.dart';
 import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/bubble.dart';
 import 'package:ch600/ui/widgets/device_drop_down.dart';
+import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:sms_advanced/sms_advanced.dart';
+import 'package:intl/intl.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
@@ -69,16 +70,15 @@ class _InboxScreenState extends State<InboxScreen> {
               return ListView.builder(
                   itemCount: messages.length,
                   itemBuilder: (c, i) {
-                    // return Text(messages[i].content,
-                    //     style: Theme.of(context)
-                    //         .textTheme
-                    //         .titleMedium!
-                    //         .copyWith(color: Colors.black));
-
                     var message = messages[i];
                     return BubbleNormal(
+                        messageOwner: "${
+                          message.kind == MessageKind.receive
+                              ? activeDevice?.value.name ?? ""
+                              : "من                   "
+                        } ${DateFormat('E').format(message.time).toPersianWeekday()} ${DateFormat('HH:mm').format(message.time)}",
                         text: message.content,
-                        isReceiver: message.kind == SmsMessageKind.Sent,
+                        isReceiver: message.kind == MessageKind.receive,
                         color: Colors.white,
                         textStyle: Theme.of(context)
                             .textTheme

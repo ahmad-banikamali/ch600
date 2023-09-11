@@ -191,7 +191,7 @@ String get deactivateKeypad {
 
 String get activateConnection {
   if (currentLang == "fa") {
-    return "فعال کردن ارتبط";
+    return "فعال کردن ارتباط";
   } else {
     return "Activate Connection";
   }
@@ -199,7 +199,7 @@ String get activateConnection {
 
 String get deactivateConnection {
   if (currentLang == "fa") {
-    return "غیر فعال کردن ارتبط";
+    return "غیر فعال کردن ارتباط";
   } else {
     return "Deactivate Connection";
   }
@@ -215,7 +215,7 @@ String get timers {
 
 String get emergency {
   if (currentLang == "fa") {
-    return "آژیر اضظراری";
+    return "آژیر اضطراری";
   } else {
     return "Emergency";
   }

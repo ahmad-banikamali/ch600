@@ -1,104 +1,54 @@
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/device_repository.dart';
-import 'package:ch600/ui/screens/alarms_screen.dart';
-import 'package:ch600/ui/screens/inbox_screen.dart';
-import 'package:ch600/ui/screens/lock_screen.dart';
-import 'package:ch600/ui/screens/relay_screen.dart';
-import 'package:ch600/ui/ui_models/advance_screen_button.dart';
+import 'package:ch600/ui/ui_models/relay_screen_button.dart';
 import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/ui/widgets/device_drop_down.dart';
-import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-class AdvanceScreen extends StatefulWidget {
-  const AdvanceScreen({super.key});
+class RelayScreen extends StatefulWidget {
+  const RelayScreen({super.key});
 
   @override
-  State<AdvanceScreen> createState() => _AdvanceScreenState();
+  State<RelayScreen> createState() => _RelayScreenState();
 }
 
-class _AdvanceScreenState extends State<AdvanceScreen> {
-  late List<AdvanceScreenButton> buttonData;
-  final baseIconDir = "assets/images/icons_advance_screen/";
+class _RelayScreenState extends State<RelayScreen> {
+  late List<RelayScreenButton> buttonData;
+  final baseIconDir = "assets/images/icons_relay_screen/";
   final iconExtension = ".png";
   var data = "";
   final DeviceRepository deviceRepository = HiveDeviceRepository();
 
-  late bool showLockScreen;
-
   @override
   void initState() {
     initButtonData();
-    showLockScreen = Hive.box(DbConstants.etcDB)
-        .get(DbConstants.keyShowLockOnAdvanceScreen, defaultValue: false);
-
-
 
     super.initState();
   }
 
   void initButtonData() {
     buttonData = [
-      AdvanceScreenButton(
-          title: activateWithSound,
-          codeToSend: "12",
-          iconName: "lockpage_lock"),
-      AdvanceScreenButton(
-          title: deactivateWithSound,
-          codeToSend: "10",
-          iconName: "lockpage_unlock"),
-      AdvanceScreenButton(
-          title: "گزارش دستگاه", codeToSend: "99", iconName: "scenario"),
-      AdvanceScreenButton(
-          title: semiActive, codeToSend: "15", iconName: "lockpage_lock"),
-      AdvanceScreenButton(
-          title: activateRemote, codeToSend: "40", iconName: "remote_active"),
-      AdvanceScreenButton(
-          title: deactivateRemote,
-          codeToSend: "41",
-          iconName: "remote_deactive"),
-      AdvanceScreenButton(
-          title: activateKeypad, codeToSend: "45", iconName: "keypad_active"),
-      AdvanceScreenButton(
-          title: deactivateKeypad,
-          codeToSend: "46",
-          iconName: "keypad_deactive"),
-      AdvanceScreenButton(
-          title: activateConnection, codeToSend: "50", iconName: "user_active"),
-      AdvanceScreenButton(
-          title: deactivateConnection,
-          codeToSend: "51",
-          iconName: "user_deactive"),
-        AdvanceScreenButton(
-            title: timers,
-            action: () async {
-              await pushScreen(const AlarmScreen());
-              data = data;
-              setState(() {});
-            },
-            iconName: "timer"),
-        AdvanceScreenButton(
-            title: "خروجی رله ها",
-            action: () async {
-              await pushScreen(const RelayScreen());
-              data = data;
-              setState(() {});
-            },
-            iconName: "lamp"),
-      AdvanceScreenButton(title: emergency, codeToSend: "70", iconName: "bell"),
-      AdvanceScreenButton(
-          title: messagesInbox,
-          action: () async {
-            await pushScreen(const InboxScreen());
-            setState(() {});
-          },
-          iconName: "inbox"),
-      AdvanceScreenButton(
-          title: "گزارش رله ها",
-          codeToSend: "98",
-          iconName: "scenario"),
+      RelayScreenButton(
+          title: "رله 1 روشن", codeToSend: "20", iconName: "lamp"),
+      RelayScreenButton(
+          title: "رله 1 خاموش", codeToSend: "21", iconName: "lamp_off"),
+      RelayScreenButton(
+          title: "رله 2 روشن", codeToSend: "25", iconName: "lamp"),
+      RelayScreenButton(
+          title: "رله 2 خاموش", codeToSend: "26", iconName: "lamp_off"),
+      RelayScreenButton(
+          title: "رله 3 روشن", codeToSend: "30", iconName: "lamp"),
+      RelayScreenButton(
+          title: "رله 3 خاموش", codeToSend: "31", iconName: "lamp_off"),
+      RelayScreenButton(
+          title: "رله 4 روشن", codeToSend: "35", iconName: "lamp"),
+      RelayScreenButton(
+          title: "رله 4 خاموش", codeToSend: "36", iconName: "lamp_off"),
+      RelayScreenButton(
+          title: "همه رله ها روشن", codeToSend: "37", iconName: "lamp"),
+      RelayScreenButton(
+          title: "همه رله ها خاموش", codeToSend: "38", iconName: "lamp_off"),
     ];
   }
 
@@ -113,8 +63,8 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
         children: [
           Scaffold(
             appBar: AppBar(
-              iconTheme: IconThemeData(
-                color: Colors.white, //change your color here
+              iconTheme: const IconThemeData(
+                color: Colors.white,
               ),
               actions: [
                 Padding(
@@ -157,9 +107,7 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
 
                       return Center(
                         child: IconButton(
-                            onPressed: button.codeToSend == null
-                                ? button.action
-                                : sendMessage,
+                            onPressed: sendMessage,
                             icon: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -188,11 +136,6 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
               ],
             ),
           ),
-          if (showLockScreen)
-            LockScreen(onSuccess: () {
-              showLockScreen = false;
-              setState(() {});
-            })
         ],
       ),
     );

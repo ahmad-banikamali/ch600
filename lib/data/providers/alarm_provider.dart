@@ -48,7 +48,7 @@ class HiveAlarmRepository extends AlarmRepository {
 
   @override
   void removeAlarmFromActiveDevice(Alarm alarm) {
-    removeAlarm(alarm.key);
+    removeAlarm(alarm);
     alarm.delete();
   }
 
