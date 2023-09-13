@@ -1,5 +1,6 @@
 import 'package:ch600/ui/widgets/background.dart';
 import 'package:ch600/utils/constants.dart';
+import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -65,12 +66,12 @@ class _LockScreenState extends State<LockScreen> {
                       .titleMedium!
                       .copyWith(fontSize: 15),
                   onCompleted: (v) {
-                    if (v == correctPassword) {
+                    if (v.replaceFarsiNumber() == correctPassword.toString().replaceFarsiNumber()) {
                       widget.onSuccess();
                     }
                   },
                   onChanged: (v) {
-                    showErrorMesssage = v.length == 4 && v != correctPassword;
+                    showErrorMesssage = v.length == 4 && v.replaceFarsiNumber() != correctPassword.toString().replaceFarsiNumber();
                     setState(() {});
                   },
                 ),

@@ -133,14 +133,19 @@ extension ExtendedInt on int {
 }
 
 extension ExtendedString on String {
+
+
+  bool isNumeric() {
+    return double.tryParse(this) != null;
+  }
+
   String replaceFarsiNumber() {
     const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const farsi = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-    var x = "";
+    var x = this;
     for (int i = 0; i < english.length; i++) {
-      x = replaceAll(farsi[i], english[i]);
+      x = x.replaceAll(farsi[i], english[i]);
     }
-
     return x;
   }
 
@@ -287,7 +292,6 @@ Future<List<Message>> getSms(String phone) async {
     }).toList();
 
   } catch (e) {
-    print(e);
     return [];
   }
 }

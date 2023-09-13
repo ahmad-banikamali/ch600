@@ -2,6 +2,7 @@ import 'package:ch600/data/models/device.dart';
 import 'package:ch600/utils/constants.dart';
 import 'package:ch600/utils/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simnumber/sim_number.dart';
 import 'package:simnumber/siminfo.dart';
@@ -140,6 +141,13 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                 onTap: null,
                 title: TextFormField(
                   initialValue: password,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(5),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      var replaceFarsiNumber = newValue.text.replaceFarsiNumber();
+                      return newValue.copyWith(text: replaceFarsiNumber);
+                    })
+                  ],
                   keyboardType: TextInputType.number,
                   style: Theme.of(context)
                       .textTheme
@@ -161,6 +169,9 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                       return " طول رمز باید 5 کارکتر باشد";
                     }
                     if(s.contains("-")||s.contains(" ")||s.contains(",") || s.contains(".")) {
+                      return "فقط کارکتر عددی وارد نمایید";
+                    }
+                    if(!s.isNumeric()){
                       return "فقط کارکتر عددی وارد نمایید";
                     }
                   },
