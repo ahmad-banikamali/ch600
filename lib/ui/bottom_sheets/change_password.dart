@@ -45,7 +45,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     .copyWith(color: Colors.black),
                 controller: newPassController,
                 validator: (s) {
-                  if (s != null && s.isNotEmpty && s.length != 4 || !s!.replaceFarsiNumber().isNumeric()) {
+                  if (s != null && s.isNotEmpty && s.length != 4 || !s!.replaceFarsiNumbers().isNumeric()) {
                     return " رمز باید از 4 کارکتر عددی تشکیل شده باشد";
                   }
                   return null;
@@ -63,7 +63,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   if(s==null || s.isEmpty){
                     return "رمز جدید را مجددا وارد نمایید";
                   }
-                  if (s.replaceFarsiNumber() != newPassController.value.text.replaceFarsiNumber()) {
+                  if (s.replaceFarsiNumbers() != newPassController.value.text.replaceFarsiNumbers()) {
                     return "رمزها همخوانی ندارند";
                   }
                   return null;
@@ -74,7 +74,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 onPressed: () {
                   if (key.currentState?.validate() == true) {
                     box.put(
-                        DbConstants.keyPassword, newPassController.value.text.replaceFarsiNumber());
+                        DbConstants.keyPassword, newPassController.value.text.replaceFarsiNumbers());
                     popScreen();
                   }
                 },

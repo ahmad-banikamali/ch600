@@ -1,16 +1,13 @@
 package com.ch600
 
-import android.Manifest
 import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.telephony.SmsManager
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -26,12 +23,12 @@ private const val channelId = "ch600_channel_01"
 
 private val mChannel = NotificationChannelCompat.Builder(channelId, importance).apply {
     setName("ch600") // Must set! Don't remove
-    setDescription("ch600 message report")
+    setDescription("ch600 home security")
 }.build()
 
 class MessageBroadcastReceiver : BroadcastReceiver() {
 
-    private var pendingIntent: PendingIntent? = null
+
 
 
     fun removeAlarm(context: Context, call: MethodCall) {
@@ -42,11 +39,11 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val intent = Intent(context, MessageBroadcastReceiver::class.java)
 
-        pendingIntent = PendingIntent.getBroadcast(
+         val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmId,
             intent,
-            PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
         )
 
         alarmManager.cancel(pendingIntent)
@@ -85,7 +82,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         }
 
 
-        pendingIntent = PendingIntent.getBroadcast(
+        val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmId,
             intent,
@@ -94,7 +91,6 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val c = calendar(alarmDaySaturdayFirst, minute, hour)
 
-        removeAlarm(context, call)
 
         try {
             alarmManager.setExact(
@@ -115,52 +111,57 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         alarmMinute: Int,
         alarmHour: Int
     ): Calendar {
-        val c = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Asia/Tehran")))
-        val todaySundayFirst = c.get(Calendar.DAY_OF_WEEK)
+
+        val currentInstance = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Asia/Tehran")))
+        val alarmInstance = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Asia/Tehran")))
+
+        val todaySundayFirst = currentInstance.get(Calendar.DAY_OF_WEEK)
         val todaySaturdayFirst = if (todaySundayFirst == 7) 0 else todaySundayFirst
-        val alarmDaySundayFirst =
-            when (alarmDaySaturdayFirst) {
-                0 -> 7
-                else -> alarmDaySaturdayFirst
-            }
+
+        val alarmDaySundayFirst = if (alarmDaySaturdayFirst == 0) 7 else alarmDaySaturdayFirst
+
         val fridayIndex = 6
 
-        c.set(Calendar.HOUR_OF_DAY, alarmHour)
-        c.set(Calendar.MINUTE, alarmMinute)
-        c.set(Calendar.SECOND, 0)
+        alarmInstance.set(Calendar.HOUR_OF_DAY, alarmHour)
+        alarmInstance.set(Calendar.MINUTE, alarmMinute)
+        alarmInstance.set(Calendar.SECOND, 0)
 
-        if (alarmDaySaturdayFirst == -1) {
+        val isAlarmRepeatEveryday = alarmDaySaturdayFirst == -1
 
-            c.set(Calendar.DAY_OF_WEEK, todaySundayFirst)
-            val currentHour = c.get(Calendar.HOUR_OF_DAY)
-            val currentMinute = c.get(Calendar.MINUTE)
+        if (isAlarmRepeatEveryday) {
+
+            alarmInstance.set(Calendar.DAY_OF_WEEK, todaySundayFirst)
+
+            val currentHour = currentInstance.get(Calendar.HOUR_OF_DAY)
+            val currentMinute = currentInstance.get(Calendar.MINUTE)
+
             if (alarmHour < currentHour || (alarmHour == currentHour && alarmMinute < currentMinute))
-                c.add(Calendar.HOUR_OF_DAY, 24)
+                alarmInstance.add(Calendar.HOUR_OF_DAY, 24)
 
         } else if (alarmDaySaturdayFirst < todaySaturdayFirst) {
-
-            c.set(Calendar.DAY_OF_WEEK, todaySundayFirst)
+            alarmInstance.set(Calendar.DAY_OF_WEEK, todaySundayFirst)
             val negativeAlarmDaySaturdayFirst =
                 fridayIndex - todaySaturdayFirst + 1 + alarmDaySaturdayFirst
             val negativeAlarmDaySundayFirst =
                 if (negativeAlarmDaySaturdayFirst == 0) 7 else negativeAlarmDaySaturdayFirst
-            c.add(Calendar.HOUR_OF_DAY, 24 * negativeAlarmDaySundayFirst)
+            alarmInstance.add(Calendar.HOUR_OF_DAY, 24 * negativeAlarmDaySundayFirst)
 
         } else {
             if (alarmDaySaturdayFirst == todaySaturdayFirst){
-                val currentHour = c.get(Calendar.HOUR_OF_DAY)
-                val currentMinute = c.get(Calendar.MINUTE)
+                val currentHour = currentInstance.get(Calendar.HOUR_OF_DAY)
+                val currentMinute = currentInstance.get(Calendar.MINUTE)
                 if (alarmHour < currentHour || (alarmHour == currentHour && alarmMinute < currentMinute))
-                    c.add(Calendar.HOUR_OF_DAY, 24*7)
+                    alarmInstance.add(Calendar.HOUR_OF_DAY, 24*7)
             }
             else
-                c.set(Calendar.DAY_OF_WEEK, alarmDaySundayFirst)
+                alarmInstance.set(Calendar.DAY_OF_WEEK, alarmDaySundayFirst)
         }
-        return c
+        return alarmInstance
     }
 
 
     override fun onReceive(context: Context, intent: Intent) {
+//        waitForDebugger()
 
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
@@ -170,7 +171,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         val codeName = intent.getStringExtra("codeName") ?: ""
         val deviceName = intent.getStringExtra("deviceName") ?: ""
 
-        pendingIntent = PendingIntent.getBroadcast(
+        val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmId,
             intent,
@@ -179,11 +180,11 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         showNotification(context,codeName,deviceName)
         sendMessage(intent, context)
-        resetAlarm(isEveryDay, alarmManager)
+        resetAlarm(isEveryDay, alarmManager,pendingIntent)
 
     }
 
-    private fun resetAlarm(isEveryDay: Boolean, alarmManager: AlarmManager) {
+    private fun resetAlarm(isEveryDay: Boolean, alarmManager: AlarmManager,pendingIntent:PendingIntent) {
         val oneDayMilliSeconds = 24 * 60 * 60 * 1000
 
         try {
@@ -200,7 +201,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
 }
 
-fun sendMessage(intent: Intent, context: Context, text: String = "") {
+fun sendMessage(intent: Intent, context: Context) {
     val phone = intent.getStringExtra("phone")
     val password = intent.getStringExtra("password")
     val defaultSimCard = intent.getStringExtra("defaultSimCard")
@@ -215,6 +216,7 @@ fun sendMessage(intent: Intent, context: Context, text: String = "") {
     smsManager.sendTextMessage(phone, null, "$password#$codeToSend", null, null)
 }
 
+
 fun showNotification(context: Context, codeName: String, deviceName: String) {
     NotificationManagerCompat.from(context).createNotificationChannel(mChannel)
     val notification: Notification = NotificationCompat.Builder(context, channelId)
@@ -223,11 +225,7 @@ fun showNotification(context: Context, codeName: String, deviceName: String) {
             " دستور \"$codeName\" به دستگاه \"$deviceName\" ارسال شد "
         )
         .build()
-    if (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
-    ) {
-        NotificationManagerCompat.from(context).notify(notifyID, notification)
-    }
+
+    NotificationManagerCompat.from(context).notify(notifyID, notification)
+
 }

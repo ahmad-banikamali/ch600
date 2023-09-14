@@ -139,7 +139,7 @@ extension ExtendedString on String {
     return double.tryParse(this) != null;
   }
 
-  String replaceFarsiNumber() {
+  String replaceFarsiNumbers() {
     const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const farsi = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     var x = this;
@@ -266,10 +266,7 @@ Future<void> setAlarm(Device device, Alarm alarm) async {
 Future<void> removeAlarm(Alarm alarm) async {
   try {
     var arguments = {
-      'codeToSend': alarm.codeToSend,
-      'dayOfWeek': alarm.dayOfWeek,
-      'hour': alarm.hour,
-      'minute': alarm.minute,
+      'alarmId': alarm.key,
     };
     await platform.invokeMethod('removeAlarm', arguments);
   } on PlatformException catch (e) {}

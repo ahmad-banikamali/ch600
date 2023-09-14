@@ -144,7 +144,7 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(5),
                     TextInputFormatter.withFunction((oldValue, newValue) {
-                      var replaceFarsiNumber = newValue.text.replaceFarsiNumber();
+                      var replaceFarsiNumber = newValue.text.replaceFarsiNumbers();
                       return newValue.copyWith(text: replaceFarsiNumber);
                     })
                   ],
@@ -176,7 +176,7 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                     }
                   },
                   onSaved: (s) {
-                    password = s!.replaceFarsiNumber();
+                    password = s!.replaceFarsiNumbers();
                   },
                 ),
               ),
@@ -239,9 +239,9 @@ class _AddNewDeviceState extends State<AddNewDevice> {
                         widget.deviceMapEntry?.key,
                         Device(
                             name: name,
-                            phone: phone,
-                            defaultSimCard: defaultSimCard,
-                            password: password)));
+                            phone: phone.replaceFarsiNumbers(),
+                            defaultSimCard: defaultSimCard.replaceFarsiNumbers(),
+                            password: password.replaceFarsiNumbers())));
                   },
                   child: Text(accept,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(

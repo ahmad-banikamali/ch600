@@ -66,12 +66,12 @@ class _LockScreenState extends State<LockScreen> {
                       .titleMedium!
                       .copyWith(fontSize: 15),
                   onCompleted: (v) {
-                    if (v.replaceFarsiNumber() == correctPassword.toString().replaceFarsiNumber()) {
+                    if (v.replaceFarsiNumbers() == correctPassword.toString().replaceFarsiNumbers()) {
                       widget.onSuccess();
                     }
                   },
                   onChanged: (v) {
-                    showErrorMesssage = v.length == 4 && v.replaceFarsiNumber() != correctPassword.toString().replaceFarsiNumber();
+                    showErrorMesssage = v.length == 4 && v.replaceFarsiNumbers() != correctPassword.toString().replaceFarsiNumbers();
                     setState(() {});
                   },
                 ),

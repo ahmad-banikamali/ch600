@@ -1,4 +1,5 @@
 import 'package:ch600/data/models/alarm.dart';
+import 'package:ch600/data/models/device.dart';
 import 'package:ch600/data/providers/device_provider.dart';
 import 'package:ch600/data/repository/alarm_repository.dart';
 import 'package:ch600/data/repository/device_repository.dart';
@@ -69,4 +70,17 @@ class HiveAlarmRepository extends AlarmRepository {
     }
     if (await Permission.sms.request().isGranted) setAlarm(device.value, alarm);
   }
+
+  @override
+  void refreshAlarmsForDevise(Device device) {
+    if(device.alarms==null) {
+      return;
+    }
+
+    for (var alarm in device.alarms!) {
+      removeAlarm(alarm);
+      setAlarm(device, alarm);
+    }
+  }
+
 }

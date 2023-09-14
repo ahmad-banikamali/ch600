@@ -34,6 +34,7 @@ class HiveDeviceRepository extends DeviceRepository {
     } else {
       refreshOldDevice(oldDevice.value, newDevice.value);
       _deviceBox.put(oldDevice.key, oldDevice.value);
+      // HiveAlarmRepository().refreshAlarmsForDevise(oldDevice.value);
     }
   }
 
