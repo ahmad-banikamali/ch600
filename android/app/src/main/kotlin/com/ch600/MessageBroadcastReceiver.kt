@@ -1,6 +1,7 @@
 package com.ch600
 
 import android.app.AlarmManager
+import android.app.AlarmManager.AlarmClockInfo
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -29,8 +30,6 @@ private val mChannel = NotificationChannelCompat.Builder(channelId, importance).
 class MessageBroadcastReceiver : BroadcastReceiver() {
 
 
-
-
     fun removeAlarm(context: Context, call: MethodCall) {
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
@@ -39,14 +38,15 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val intent = Intent(context, MessageBroadcastReceiver::class.java)
 
-         val pendingIntent = PendingIntent.getBroadcast(
+        val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmId,
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
         )
 
-        alarmManager.cancel(pendingIntent)
+        if (pendingIntent != null)
+            alarmManager.cancel(pendingIntent)
 
     }
 
@@ -93,9 +93,11 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
 
         try {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                c.timeInMillis,
+            alarmManager.setAlarmClock(
+                AlarmClockInfo(
+                    c.timeInMillis,
+                    pendingIntent
+                ),
                 pendingIntent
             )
         } catch (e: Exception) {
@@ -112,8 +114,8 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         alarmHour: Int
     ): Calendar {
 
-        val currentInstance = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Asia/Tehran")))
-        val alarmInstance = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("Asia/Tehran")))
+        val currentInstance = Calendar.getInstance()
+        val alarmInstance = Calendar.getInstance()
 
         val todaySundayFirst = currentInstance.get(Calendar.DAY_OF_WEEK)
         val todaySaturdayFirst = if (todaySundayFirst == 7) 0 else todaySundayFirst
@@ -147,13 +149,12 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             alarmInstance.add(Calendar.HOUR_OF_DAY, 24 * negativeAlarmDaySundayFirst)
 
         } else {
-            if (alarmDaySaturdayFirst == todaySaturdayFirst){
+            if (alarmDaySaturdayFirst == todaySaturdayFirst) {
                 val currentHour = currentInstance.get(Calendar.HOUR_OF_DAY)
                 val currentMinute = currentInstance.get(Calendar.MINUTE)
                 if (alarmHour < currentHour || (alarmHour == currentHour && alarmMinute < currentMinute))
-                    alarmInstance.add(Calendar.HOUR_OF_DAY, 24*7)
-            }
-            else
+                    alarmInstance.add(Calendar.HOUR_OF_DAY, 24 * 7)
+            } else
                 alarmInstance.set(Calendar.DAY_OF_WEEK, alarmDaySundayFirst)
         }
         return alarmInstance
@@ -161,7 +162,6 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
 
     override fun onReceive(context: Context, intent: Intent) {
-//        waitForDebugger()
 
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
@@ -178,20 +178,23 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_MUTABLE
         )
 
-        showNotification(context,codeName,deviceName)
+        showNotification(context, codeName, deviceName)
         sendMessage(intent, context)
-        resetAlarm(isEveryDay, alarmManager,pendingIntent)
+        resetAlarm(isEveryDay, alarmManager, pendingIntent)
 
     }
 
-    private fun resetAlarm(isEveryDay: Boolean, alarmManager: AlarmManager,pendingIntent:PendingIntent) {
+    private fun resetAlarm(
+        isEveryDay: Boolean,
+        alarmManager: AlarmManager,
+        pendingIntent: PendingIntent
+    ) {
         val oneDayMilliSeconds = 24 * 60 * 60 * 1000
 
         try {
             val interval = if (isEveryDay) oneDayMilliSeconds else 7 * oneDayMilliSeconds
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                Calendar.getInstance().timeInMillis + interval,
+            alarmManager.setAlarmClock(
+                AlarmClockInfo(Calendar.getInstance().timeInMillis + interval, pendingIntent),
                 pendingIntent
             )
         } catch (e: Exception) {
