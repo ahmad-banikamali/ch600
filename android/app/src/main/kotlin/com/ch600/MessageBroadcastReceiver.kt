@@ -12,19 +12,19 @@ import android.telephony.SmsManager
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.plugin.common.MethodCall
-import java.time.ZoneId
 import java.util.Calendar
-import java.util.TimeZone
+
 
 private const val notifyID: Int = 1
 private const val importance = NotificationManagerCompat.IMPORTANCE_DEFAULT
-private const val channelId = "ch600_channel_01"
+private const val channelId = "ch600_channel_send_sms"
 
 private val mChannel = NotificationChannelCompat.Builder(channelId, importance).apply {
-    setName("ch600") // Must set! Don't remove
-    setDescription("ch600 home security")
+    setName("ch600 sms") // Must set! Don't remove
 }.build()
 
 class MessageBroadcastReceiver : BroadcastReceiver() {
@@ -48,10 +48,15 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         if (pendingIntent != null)
             alarmManager.cancel(pendingIntent)
 
+
+        checkToStopService(context)
     }
+
 
     fun setAlarm(context: Context, call: MethodCall) {
 
+
+        checkToStartService(context)
 
         val phone = call.argument<String>("phone")
         val password = call.argument<String>("password")
@@ -91,20 +96,54 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         val c = calendar(alarmDaySaturdayFirst, minute, hour)
 
-
-        try {
-            alarmManager.setAlarmClock(
-                AlarmClockInfo(
-                    c.timeInMillis,
-                    pendingIntent
-                ),
+        alarmManager.setAlarmClock(
+            AlarmClockInfo(
+                c.timeInMillis,
                 pendingIntent
-            )
-        } catch (e: Exception) {
-            println(e)
+            ),
+            pendingIntent
+        )
+
+
+    }
+
+    private fun checkToStartService(context: Context) {
+        val alarmCount = getAlarmCount(context)
+
+        val isFirstAlarm = alarmCount == 0
+
+        if (isFirstAlarm) {
+            val serviceIntent = Intent(context, ForegroundService::class.java)
+            ContextCompat.startForegroundService(context, serviceIntent)
         }
 
+        setAlarmCount(context, alarmCount + 1)
+    }
 
+    private fun checkToStopService(context: Context) {
+        val alarmCount = getAlarmCount(context)
+        val isLastAlarm = alarmCount - 1 == 0
+
+        setAlarmCount(context, alarmCount - 1)
+
+        if (isLastAlarm) {
+            val serviceIntent = Intent(
+                context,
+                ForegroundService::class.java
+            )
+            context.stopService(serviceIntent)
+        }
+
+    }
+
+    private fun getAlarmCount(context: Context): Int {
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return sharedPrefs.getInt("alarm_count", 0)
+    }
+
+    private fun setAlarmCount(context: Context, n: Int) {
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        sharedPrefs.edit().putInt("alarm_count", n).apply()
     }
 
 
