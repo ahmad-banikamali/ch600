@@ -1,11 +1,13 @@
 package com.ch600
 
+import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.AlarmManager.AlarmClockInfo
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.os.Build
 import android.telephony.SmsManager
@@ -56,6 +58,9 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
     fun setAlarm(context: Context, call: MethodCall) {
 
 
+        val alarmCount = getAlarmCount(context)
+        setAlarmCount(context, alarmCount + 1)
+
         checkToStartService(context)
 
         val phone = call.argument<String>("phone")
@@ -72,8 +77,6 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
         val alarmId = call.argument<Int>("alarmId") ?: 0
 
 
-        val alarmManager =
-            context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
         val intent: Intent = Intent(context, MessageBroadcastReceiver::class.java).apply {
             putExtra("phone", phone)
@@ -86,6 +89,23 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             putExtra("deviceName", deviceName)
         }
 
+        setAlarmClock(context, alarmId, intent, alarmDaySaturdayFirst, minute, hour)
+
+
+    }
+
+    private fun setAlarmClock(
+        context: Context,
+        alarmId: Int,
+        intent: Intent,
+        alarmDaySaturdayFirst: Int,
+        minute: Int,
+        hour: Int,
+    ) {
+
+
+        val alarmManager =
+            context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -103,26 +123,28 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             ),
             pendingIntent
         )
-
-
     }
 
+
+    @Suppress("DEPRECATION") // Deprecated for third party Services.
+    private fun <T> Context.isServiceForegrounded(service: Class<T>) =
+        (getSystemService(ACTIVITY_SERVICE) as? ActivityManager)
+            ?.getRunningServices(Integer.MAX_VALUE)
+            ?.find { it.service.className == service.name }
+            ?.foreground == true
+
     private fun checkToStartService(context: Context) {
-        val alarmCount = getAlarmCount(context)
 
-        val isFirstAlarm = alarmCount == 0
-
-        if (isFirstAlarm) {
+        if (context.isServiceForegrounded(ForegroundService::class.java).not()) {
             val serviceIntent = Intent(context, ForegroundService::class.java)
             ContextCompat.startForegroundService(context, serviceIntent)
         }
 
-        setAlarmCount(context, alarmCount + 1)
     }
 
     private fun checkToStopService(context: Context) {
         val alarmCount = getAlarmCount(context)
-        val isLastAlarm = alarmCount - 1 == 0
+        val isLastAlarm = alarmCount == 1
 
         setAlarmCount(context, alarmCount - 1)
 
@@ -219,15 +241,17 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
         showNotification(context, codeName, deviceName)
         sendMessage(intent, context)
-        resetAlarm(isEveryDay, alarmManager, pendingIntent)
+        resetAlarm(isEveryDay, alarmManager, pendingIntent,context)
 
     }
 
     private fun resetAlarm(
         isEveryDay: Boolean,
         alarmManager: AlarmManager,
-        pendingIntent: PendingIntent
+        pendingIntent: PendingIntent,
+        context: Context
     ) {
+        checkToStartService(context)
         val oneDayMilliSeconds = 24 * 60 * 60 * 1000
 
         try {
