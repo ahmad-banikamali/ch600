@@ -26,7 +26,7 @@ class MainActivity : FlutterFragmentActivity() {
             val messageBroadcastReceiver = MessageBroadcastReceiver();
             when (call.method) {
                 "setAlarm" -> {
-                    ifHuaweiAlert()
+//                    ifHuaweiAlert()
                     messageBroadcastReceiver.setAlarm(baseContext, call)
                     result.success("added")
                 }

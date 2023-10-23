@@ -57,7 +57,19 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.4.6
   build_web_compilers: ^4.0.5
+  flutter_launcher_icons: "^0.13.1"
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+  web:
+    generate: true
+    image_path: "assets/images/ic_launcher.png"
+    background_color: "#ffffff"
+    theme_color: "#ffffff"
 
 dependency_overrides:
   intl: ^0.18.0

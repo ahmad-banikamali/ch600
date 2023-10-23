@@ -8,11 +8,14 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 
 
 class ForegroundService : Service() {
 
+    private lateinit var pm: PowerManager
+    private lateinit var wl: PowerManager.WakeLock
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         createNotificationChannel()
@@ -29,7 +32,24 @@ class ForegroundService : Service() {
             .build()
 
         startForeground(2, notification)
+        pm = getSystemService(POWER_SERVICE) as PowerManager
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "a:b")
+
+        if (wl.isHeld)
+            wl.release()
+
+        wl.acquire()
+
         return START_STICKY_COMPATIBILITY
+    }
+
+    override fun onDestroy() {
+
+        pm = getSystemService(POWER_SERVICE) as PowerManager
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "a:b")
+        if (wl.isHeld)
+        wl.release()
+        super.onDestroy()
     }
 
 
