@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.telephony.SmsManager
 import androidx.core.app.NotificationChannelCompat
@@ -32,13 +33,14 @@ private val mChannel = NotificationChannelCompat.Builder(channelId, importance).
 class MessageBroadcastReceiver : BroadcastReceiver() {
 
 
-    fun removeAlarm(context: Context, call: MethodCall) {
+    fun removeAlarm(context: Context, alarmId:Int) {
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
-        val alarmId = call.argument<Int>("alarmId") ?: 0
 
         val intent = Intent(context, MessageBroadcastReceiver::class.java)
+
+        dropAlarmFromSharedPrefs(context, alarmId)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -89,6 +91,7 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
             putExtra("deviceName", deviceName)
         }
 
+        enableAlarm(context, alarmId)
         setAlarmClock(context, alarmId, intent, alarmDaySaturdayFirst, minute, hour)
 
 
@@ -159,13 +162,29 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun getAlarmCount(context: Context): Int {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPrefs = getSharedPrefs(context)
         return sharedPrefs.getInt("alarm_count", 0)
     }
 
     private fun setAlarmCount(context: Context, n: Int) {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPrefs = getSharedPrefs(context)
         sharedPrefs.edit().putInt("alarm_count", n).apply()
+    }
+
+    private fun getSharedPrefs(context: Context): SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(context)
+
+    private fun isAlarmActive(context: Context,alarmId: Int): Boolean =
+        getSharedPrefs(context).getBoolean(alarmId.toString(),false)
+
+
+
+    private fun enableAlarm(context: Context,alarmId: Int){
+        getSharedPrefs(context).edit().putBoolean(alarmId.toString(),true).apply()
+    }
+
+    private fun dropAlarmFromSharedPrefs(context: Context, alarmId: Int){
+        getSharedPrefs(context).edit().remove(alarmId.toString()).apply()
     }
 
 
@@ -223,11 +242,14 @@ class MessageBroadcastReceiver : BroadcastReceiver() {
 
 
     override fun onReceive(context: Context, intent: Intent) {
+        val alarmId = intent.getIntExtra("alarmId", 0)
+        if (isAlarmActive(context, alarmId).not()) {
+            return
+        }
 
         val alarmManager =
             context.getSystemService(FlutterFragmentActivity.ALARM_SERVICE) as AlarmManager
 
-        val alarmId = intent.getIntExtra("alarmId", 0)
         val isEveryDay = intent.getBooleanExtra("isEveryDay", false)
         val codeName = intent.getStringExtra("codeName") ?: ""
         val deviceName = intent.getStringExtra("deviceName") ?: ""

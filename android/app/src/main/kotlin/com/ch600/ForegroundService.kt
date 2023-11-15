@@ -29,8 +29,11 @@ class ForegroundService : Service() {
             .setContentTitle("برنامه ch600 در حال اجرا است")
             .setSmallIcon(R.mipmap.launcher_icon)
             .setContentIntent(pendingIntent)
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
-
+        notification.flags = Notification.FLAG_ONGOING_EVENT
         startForeground(2, notification)
         pm = getSystemService(POWER_SERVICE) as PowerManager
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "a:b")
@@ -48,7 +51,7 @@ class ForegroundService : Service() {
         pm = getSystemService(POWER_SERVICE) as PowerManager
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "a:b")
         if (wl.isHeld)
-        wl.release()
+          wl.release()
         super.onDestroy()
     }
 

@@ -32,7 +32,7 @@ class MainActivity : FlutterFragmentActivity() {
                 }
 
                 "removeAlarm" -> {
-                    messageBroadcastReceiver.removeAlarm(baseContext, call)
+                    messageBroadcastReceiver.removeAlarm(baseContext, call.argument<Int>("alarmId") ?: 0)
                     result.success("removed")
                 }
 
